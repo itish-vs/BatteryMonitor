@@ -42,7 +42,7 @@ Example:
 ---
 
 ## 📦 Installation
-1) Download the latest release from Releases(https://github.com/yourusername/BatteryMonitor/releases)
+1) Download the latest release from <a href="https://github.com/yourusername/BatteryMonitor/releases">Releases</a>
 2) Extract the zip to any folder.
 3) Run BatteryMonitor.exe (no installer required).
 
@@ -50,7 +50,7 @@ Example:
 
 ## 🚫 Requirements
 ✔️ No installation needed if using self-contained build (recommended).
-⚠️ If using the framework-dependent version, ensure the .NET Desktop Runtime 8.0 is installed. Download from Microsoft (https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+⚠️ If using the framework-dependent version, ensure the .NET Desktop Runtime 8.0 is installed. Download from <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">Microsoft</a>
 
 ---
 
@@ -66,7 +66,7 @@ If you encounter issues, please open an Issue describing the problem, steps to r
 ---
 
 ## 📜 License
-This project is licensed under the MIT License — see LICENSE.
+This project is licensed under the MIT License — see LICENSE(https://github.com/itish-vs/BatteryMonitor/LICENSE).
 
 
 #BatteryMonitor #WindowsTrayApp #BatteryAlert #BatterySaver #WindowsUtility #PowerManagement #LaptopTools #OpenSource #DotNet #CSharp #WinForms
