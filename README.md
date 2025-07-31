@@ -18,10 +18,10 @@
 
 ---
 📣 Screenshots
-📸 Img1
-📸 Img2
-📸 Img3
-📸 Img4
+1) 📸 Img1
+2) 📸 Img2
+3) 📸 Img3
+4) 📸 Img4
 
 ---
 ## ⚙️ Configuration
