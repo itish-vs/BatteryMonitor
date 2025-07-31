@@ -18,10 +18,10 @@
 
 ---
 📣 Screenshots
--📸  
--📸 
--📸 
--📸
+- 📸  
+- 📸 
+- 📸 
+- 📸
 
 ---
 ## ⚙️ Configuration
@@ -55,14 +55,14 @@ Example:
 ---
 
 ## 🚫 Requirements
-✔️ No installation needed if using self-contained build (recommended).
--⚠️ If using the framework-dependent version, ensure the .NET Desktop Runtime 8.0 is installed. Download from <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">Microsoft</a>
+- ✔️ No installation needed if using self-contained build (recommended).
+- ⚠️ If using the framework-dependent version, ensure the .NET Desktop Runtime 8.0 is installed. Download from <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0">Microsoft</a>
 
 ---
 
 ## 🙌 Credits
 Developed and maintained by Itish Nigam.
--If you find this useful, give the repository a ⭐️ and share it!
+If you find this useful, give the repository a ⭐️ and share it!
 
 ---
 
