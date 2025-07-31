@@ -66,7 +66,7 @@ If you encounter issues, please open an Issue describing the problem, steps to r
 ---
 
 ## 📜 License
-This project is licensed under the MIT License — see LICENSE(https://github.com/itish-vs/BatteryMonitor/LICENSE).
+This project is licensed under the MIT License — see <a href="https://github.com/itish-vs/BatteryMonitor/blob/main/LICENSE">LICENSE</a>.
 
 
 #BatteryMonitor #WindowsTrayApp #BatteryAlert #BatterySaver #WindowsUtility #PowerManagement #LaptopTools #OpenSource #DotNet #CSharp #WinForms
