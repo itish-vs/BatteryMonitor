@@ -67,7 +67,7 @@ If you find this useful, give the repository a ⭐️ and share it!
 ---
 
 ## 📣 Support
-If you encounter issues, please open an Issue describing the problem, steps to reproduce, and relevant logs or screenshots.
+If you encounter issues, please open an <a href="https://github.com/itish-vs/BatteryMonitor/issues">Issue</a> describing the problem, steps to reproduce, and relevant logs or screenshots.
 
 ---
 
