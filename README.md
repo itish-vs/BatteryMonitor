@@ -42,7 +42,7 @@ Example:
 ---
 
 ## 📦 Installation
-1) Download the latest release from <a href="https://github.com/yourusername/BatteryMonitor/releases">Releases</a>
+1) Download the latest release from <a href="https://github.com/itish-vs/BatteryMonitor/releases">Releases</a>
 2) Extract the zip to any folder.
 3) Run BatteryMonitor.exe (no installer required).
 
