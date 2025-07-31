@@ -17,7 +17,13 @@
 - ✅ **Battery Charging Animation**: Shows an animated GIF when charging, hidden otherwise.
 
 ---
+📣 Screenshots
+📸 Img1
+📸 Img2
+📸 Img3
+📸 Img4
 
+---
 ## ⚙️ Configuration
 
 The app uses an `appsettings.json` for easy customization.  
