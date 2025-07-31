@@ -31,19 +31,42 @@ Example:
     "LowBatterySound": "Resources/Low Battery.wav"
   }
 }
+```
 ---
-✅ Tips:
+
+## ✅ Tips:
 1) UpperThreshold: The % at which to alert when charging.
 2) LowerThreshold: The % at which to alert when discharging.
 3) Sound files must exist in the Resources folder.
 
-📦 Installation
+---
+
+## 📦 Installation
 1) Download the latest release from Releases(https://github.com/yourusername/BatteryMonitor/releases)
 2) Extract the zip to any folder.
 3) Run BatteryMonitor.exe (no installer required).
 
-🚫 Requirements
+---
+
+## 🚫 Requirements
 ✔️ No installation needed if using self-contained build (recommended).
 ⚠️ If using the framework-dependent version, ensure the .NET Desktop Runtime 8.0 is installed. Download from Microsoft (https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
+---
+
+## 🙌 Credits
+Developed and maintained by Itish Nigam.
+If you find this useful, give the repository a ⭐️ and share it!
+
+---
+
+## 📣 Support
+If you encounter issues, please open an Issue describing the problem, steps to reproduce, and relevant logs or screenshots.
+
+---
+
+## 📜 License
+This project is licensed under the MIT License — see LICENSE.
+
 
 #BatteryMonitor #WindowsTrayApp #BatteryAlert #BatterySaver #WindowsUtility #PowerManagement #LaptopTools #OpenSource #DotNet #CSharp #WinForms
