@@ -7,7 +7,7 @@
   "targets": {
     ".NETCoreApp,Version=v8.0": {},
     ".NETCoreApp,Version=v8.0/win-x64": {
-      "BatteryMonitor/1.0.2508.224": {
+      "BatteryMonitor/1.0.0": {
         "dependencies": {
           "Microsoft.Extensions.Configuration": "9.0.7",
           "Microsoft.Extensions.Configuration.Binder": "9.0.7",
@@ -152,7 +152,7 @@
     }
   },
   "libraries": {
-    "BatteryMonitor/1.0.2508.224": {
+    "BatteryMonitor/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
