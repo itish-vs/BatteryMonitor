@@ -273,7 +273,7 @@ namespace BatteryMonitor
                 {
                     trayIcon.ShowBalloonTip(3000, "Battery Monitor", "No Battery Detected!", ToolTipIcon.Error);
                     lblStatus.Text = "No Battery Detected!";
-                   throw new Exception("No Battery Detected!");
+                    throw new Exception("No Battery Detected!");
                 }
 
 
