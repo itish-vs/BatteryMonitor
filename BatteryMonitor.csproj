@@ -9,7 +9,7 @@
 		<StartupObject>BatteryMonitor.Program</StartupObject>
 		<ApplicationIcon>Resources\BatteryIcon.ico</ApplicationIcon>
 		<PublishSingleFile>false</PublishSingleFile>
-		<SelfContained>true</SelfContained>
+		<SelfContained>false</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 	</PropertyGroup>
