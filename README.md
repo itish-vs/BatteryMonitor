@@ -30,8 +30,9 @@ Example:
   "BatteryMonitor": {
     "UpperThreshold": 90,
     "LowerThreshold": 15,
-    "FullBatterySound": "Resources/Full Battery.wav",
-    "LowBatterySound": "Resources/Low Battery.wav"
+    "FullBatterySound": "Resources\\Full Battery.wav",
+    "LowBatterySound": "Resources\\Low Battery.wav",
+    "MuteAlerts": false
   }
 }
 ```
