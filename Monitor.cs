@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static JCS.ToggleSwitch;
 
 namespace BatteryMonitor
 {
@@ -123,10 +124,13 @@ namespace BatteryMonitor
                 SetRobotoFont(this);
 
                 // Wire up events
-                chkViewConfig.CheckedChanged += chkViewConfig_CheckedChanged;
                 configSlideTimer = new System.Windows.Forms.Timer();
                 configSlideTimer.Interval = 30; // ms, adjust for speed
                 configSlideTimer.Tick += ConfigSlideTimer_Tick;
+
+
+
+
             }
             catch (Exception ex)
             {
@@ -252,7 +256,7 @@ namespace BatteryMonitor
             {
                 lblConfigUpper.Text = $"Upper limit: {settings.UpperThreshold}%";
                 lblConfigLower.Text = $"Lower limit: {settings.LowerThreshold}%";
-                chkAlert.Checked = settings.MuteAlerts;
+                tglMute.Checked = settings.MuteAlerts;
             }
         }
 
@@ -347,7 +351,7 @@ namespace BatteryMonitor
 
             if (chargeStatus == BatteryChargeStatus.NoSystemBattery)
             {
-                 throw new Exception("No Battery Detected!!");
+                throw new Exception("No Battery Detected!!");
             }
 
             if (batteryLevel == 100)
@@ -506,7 +510,7 @@ namespace BatteryMonitor
             try
             {
 
-                if (chkAlert != null && chkAlert.Checked) { return; } // Alert muted
+                if (tglMute != null && tglMute.Checked) { return; } // Alert muted
                 if (string.IsNullOrWhiteSpace(fileName))
                     return;
                 if (isAlertCompleted)
@@ -746,15 +750,6 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Handler for checkbox
-        /// </summary>
-        private void chkViewConfig_CheckedChanged(object? sender, EventArgs e)
-        {
-            configPanelExpanding = chkViewConfig.Checked;
-            configSlideTimer.Start();
-        }
-
-        /// <summary>
         /// Timer tick for sliding animation
         /// </summary>
         private void ConfigSlideTimer_Tick(object? sender, EventArgs e)
@@ -791,9 +786,21 @@ namespace BatteryMonitor
 
         #endregion
 
-        private void chkAlert_CheckedChanged(object sender, EventArgs e)
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (chkAlert.Checked)
+            StopAlertSound();
+            if (trayIcon != null) trayIcon.Visible = false;
+            base.OnFormClosing(e);
+        }
+        private void btnTray_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
+
+        private void tglMute_CheckedChanged(object sender, EventArgs e)
+        {
+            if (tglMute.Checked)
             {
                 StopAlertSound();
             }
@@ -805,17 +812,12 @@ namespace BatteryMonitor
                 // Restart timer to check battery status immediately
                 Timer_Tick(null, EventArgs.Empty);
             }
+        }
 
-        }
-        protected override void OnFormClosing(FormClosingEventArgs e)
+        private void tglConfig_CheckedChanged(object sender, EventArgs e)
         {
-            StopAlertSound();
-            if (trayIcon != null) trayIcon.Visible = false;
-            base.OnFormClosing(e);
-        }
-        private void btnTray_Click(object sender, EventArgs e)
-        {
-            this.Hide();
+            configPanelExpanding = tglConfig.Checked;
+            configSlideTimer.Start();
         }
     }
 

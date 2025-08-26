@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-
+using static JCS.ToggleSwitch;
 namespace BatteryMonitor
 {
     partial class Monitor
@@ -17,12 +17,11 @@ namespace BatteryMonitor
         private ToolTip toolTip1;
         private System.ComponentModel.IContainer components;
         private Controls.GradientProgressBar gradientProgressBar1;
-        private CheckBox chkAlert;
         private Panel panelConfig;
-        private CheckBox chkViewConfig;
         private System.Windows.Forms.Timer configSlideTimer;
         private Button btnTray;
         private NotifyIcon notifyIcon1;
+        private JCS.ToggleSwitch tglMute;
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
@@ -38,12 +37,14 @@ namespace BatteryMonitor
             btnMinimize = new Button();
             labelTitle = new Label();
             toolTip1 = new ToolTip(components);
-            chkAlert = new CheckBox();
             panelConfig = new Panel();
-            chkViewConfig = new CheckBox();
+            tglMute = new JCS.ToggleSwitch();
             configSlideTimer = new System.Windows.Forms.Timer(components);
             gradientProgressBar1 = new BatteryMonitor.Controls.GradientProgressBar();
             notifyIcon1 = new NotifyIcon(components);
+            label1 = new Label();
+            tglConfig = new JCS.ToggleSwitch();
+            lblConfig = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBoxBattery).BeginInit();
             panelTop.SuspendLayout();
             panelConfig.SuspendLayout();
@@ -175,18 +176,6 @@ namespace BatteryMonitor
             labelTitle.TabIndex = 2;
             labelTitle.Text = "Battery Monitor";
             // 
-            // chkAlert
-            // 
-            chkAlert.AutoSize = true;
-            chkAlert.Location = new Point(359, 46);
-            chkAlert.Name = "chkAlert";
-            chkAlert.Size = new Size(92, 19);
-            chkAlert.TabIndex = 7;
-            chkAlert.Text = "Mute Alerts?";
-            toolTip1.SetToolTip(chkAlert, "Mute alert sound");
-            chkAlert.UseVisualStyleBackColor = true;
-            chkAlert.CheckedChanged += chkAlert_CheckedChanged;
-            // 
             // panelConfig
             // 
             panelConfig.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -199,15 +188,16 @@ namespace BatteryMonitor
             panelConfig.Size = new Size(324, 0);
             panelConfig.TabIndex = 8;
             // 
-            // chkViewConfig
+            // tglMute
             // 
-            chkViewConfig.AutoSize = true;
-            chkViewConfig.Location = new Point(359, 65);
-            chkViewConfig.Name = "chkViewConfig";
-            chkViewConfig.Size = new Size(128, 19);
-            chkViewConfig.TabIndex = 0;
-            chkViewConfig.Text = "View Configuration";
-            chkViewConfig.UseVisualStyleBackColor = true;
+            tglMute.Location = new Point(450, 45);
+            tglMute.Name = "tglMute";
+            tglMute.OffFont = new Font("Segoe UI", 9F);
+            tglMute.OnFont = new Font("Segoe UI", 9F);
+            tglMute.Size = new Size(40, 20);
+            tglMute.Style = ToggleSwitchStyle.IOS5;
+            tglMute.TabIndex = 10;
+            tglMute.CheckedChanged += tglMute_CheckedChanged;
             // 
             // gradientProgressBar1
             // 
@@ -226,20 +216,51 @@ namespace BatteryMonitor
             notifyIcon1.Text = "notifyIcon1";
             notifyIcon1.Visible = true;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(376, 48);
+            label1.Name = "label1";
+            label1.Size = new Size(73, 15);
+            label1.TabIndex = 11;
+            label1.Text = "Mute Alerts?";
+            // 
+            // tglConfig
+            // 
+            tglConfig.Location = new Point(450, 69);
+            tglConfig.Name = "tglConfig";
+            tglConfig.OffFont = new Font("Segoe UI", 9F);
+            tglConfig.OnFont = new Font("Segoe UI", 9F);
+            tglConfig.Size = new Size(40, 20);
+            tglConfig.Style = ToggleSwitchStyle.IOS5;
+            tglConfig.TabIndex = 12;
+            tglConfig.CheckedChanged += tglConfig_CheckedChanged;
+            // 
+            // lblConfig
+            // 
+            lblConfig.AutoSize = true;
+            lblConfig.Location = new Point(376, 71);
+            lblConfig.Name = "lblConfig";
+            lblConfig.Size = new Size(71, 15);
+            lblConfig.TabIndex = 13;
+            lblConfig.Text = "View Config";
+            // 
             // Monitor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Honeydew;
             ClientSize = new Size(500, 234);
+            Controls.Add(lblConfig);
+            Controls.Add(tglConfig);
+            Controls.Add(label1);
             Controls.Add(gradientProgressBar1);
             Controls.Add(lblBatteryPercent);
             Controls.Add(lblStatus);
-            Controls.Add(chkViewConfig);
             Controls.Add(panelConfig);
-            Controls.Add(chkAlert);
             Controls.Add(panelTop);
             Controls.Add(pictureBoxBattery);
+            Controls.Add(tglMute);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -254,6 +275,8 @@ namespace BatteryMonitor
             ResumeLayout(false);
             PerformLayout();
         }
-
+        private Label label1;
+        private JCS.ToggleSwitch tglConfig;
+        private Label lblConfig;
     }
 }
