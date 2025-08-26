@@ -71,6 +71,16 @@ namespace BatteryMonitor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap BatteryCharging {
+            get {
+                object obj = ResourceManager.GetObject("BatteryCharging", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon BatteryIcon {
@@ -106,16 +116,6 @@ namespace BatteryMonitor.Properties {
         internal static System.Drawing.Bitmap LowMid {
             get {
                 object obj = ResourceManager.GetObject("LowMid", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap MidHigh {
-            get {
-                object obj = ResourceManager.GetObject("MidHigh", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

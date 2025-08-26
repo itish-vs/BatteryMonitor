@@ -78,7 +78,7 @@ namespace BatteryMonitor.Controls
 
             string percent = $"{(int)((float)value / max * 100)}%";
             var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-            e.Graphics.DrawString(percent, Font, Brushes.Black, rect, sf);
+            e.Graphics.DrawString(percent, Font, Brushes.White, rect, sf);
         }
     }
 }

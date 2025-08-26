@@ -17,17 +17,19 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\AlmostFull.gif" />
+	  <None Remove="Resources\AlmostFull.png" />
+	  <None Remove="Resources\BatteryCharging.gif" />
 	  <None Remove="Resources\FullCharge.gif" />
+	  <None Remove="Resources\FullCharge.png" />
 	  <None Remove="Resources\LowCharging.gif" />
+	  <None Remove="Resources\LowCharging.png" />
 	  <None Remove="Resources\LowMid.gif" />
+	  <None Remove="Resources\LowMid.png" />
 	  <None Remove="Resources\MidHigh.gif" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="appsettings.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Resources\BatteryCharging.gif">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Resources\Full Battery.wav">
@@ -45,24 +47,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\AlmostFull.gif">
+		<EmbeddedResource Include="Resources\AlmostFull.png" />
+		<EmbeddedResource Include="Resources\BatteryCharging.gif">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Resources\BatteryIcon.ico">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Resources\FullCharge.gif">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Resources\LowCharging.gif">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Resources\LowMid.gif">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Resources\MidHigh.gif">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</EmbeddedResource>
+		<EmbeddedResource Include="Resources\FullCharge.png" />
+		<EmbeddedResource Include="Resources\LowCharging.png" />
+		<EmbeddedResource Include="Resources\LowMid.png" />
 	</ItemGroup>
 
 	<ItemGroup>

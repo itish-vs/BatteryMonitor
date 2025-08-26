@@ -15,7 +15,14 @@ namespace BatteryMonitor
         private Button btnMinimize;
         private Label labelTitle;
         private ToolTip toolTip1;
-
+        private System.ComponentModel.IContainer components;
+        private Controls.GradientProgressBar gradientProgressBar1;
+        private CheckBox chkAlert;
+        private Panel panelConfig;
+        private CheckBox chkViewConfig;
+        private System.Windows.Forms.Timer configSlideTimer;
+        private Button btnTray;
+        private NotifyIcon notifyIcon1;
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
@@ -26,15 +33,17 @@ namespace BatteryMonitor
             lblConfigLower = new Label();
             pictureBoxBattery = new PictureBox();
             panelTop = new Panel();
+            btnTray = new Button();
             btnClose = new Button();
             btnMinimize = new Button();
             labelTitle = new Label();
             toolTip1 = new ToolTip(components);
             chkAlert = new CheckBox();
-            gradientProgressBar1 = new BatteryMonitor.Controls.GradientProgressBar();
             panelConfig = new Panel();
             chkViewConfig = new CheckBox();
             configSlideTimer = new System.Windows.Forms.Timer(components);
+            gradientProgressBar1 = new BatteryMonitor.Controls.GradientProgressBar();
+            notifyIcon1 = new NotifyIcon(components);
             ((System.ComponentModel.ISupportInitialize)pictureBoxBattery).BeginInit();
             panelTop.SuspendLayout();
             panelConfig.SuspendLayout();
@@ -85,18 +94,19 @@ namespace BatteryMonitor
             // pictureBoxBattery
             // 
             pictureBoxBattery.BackgroundImageLayout = ImageLayout.Center;
-            pictureBoxBattery.Image = Properties.Resources.FullCharge;
+            pictureBoxBattery.Image = Properties.Resources.BatteryCharging;
             pictureBoxBattery.InitialImage = null;
-            pictureBoxBattery.Location = new Point(42, 95);
+            pictureBoxBattery.Location = new Point(42, 80);
             pictureBoxBattery.Name = "pictureBoxBattery";
-            pictureBoxBattery.Size = new Size(82, 83);
-            pictureBoxBattery.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBoxBattery.Size = new Size(94, 65);
+            pictureBoxBattery.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxBattery.TabIndex = 1;
             pictureBoxBattery.TabStop = false;
             // 
             // panelTop
             // 
             panelTop.BackColor = Color.FromArgb(40, 120, 210);
+            panelTop.Controls.Add(btnTray);
             panelTop.Controls.Add(btnClose);
             panelTop.Controls.Add(btnMinimize);
             panelTop.Controls.Add(labelTitle);
@@ -107,6 +117,22 @@ namespace BatteryMonitor
             panelTop.TabIndex = 0;
             panelTop.MouseDown += panelTop_MouseDown;
             panelTop.MouseUp += panelTop_MouseUp;
+            // 
+            // btnTray
+            // 
+            btnTray.BackColor = Color.Transparent;
+            btnTray.FlatAppearance.BorderSize = 0;
+            btnTray.FlatStyle = FlatStyle.Flat;
+            btnTray.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnTray.ForeColor = Color.White;
+            btnTray.Location = new Point(372, 5);
+            btnTray.Name = "btnTray";
+            btnTray.Size = new Size(30, 30);
+            btnTray.TabIndex = 3;
+            btnTray.Text = "🔽";
+            toolTip1.SetToolTip(btnTray, "Minimize to Tray");
+            btnTray.UseVisualStyleBackColor = false;
+            btnTray.Click += btnTray_Click;
             // 
             // btnClose
             // 
@@ -130,7 +156,7 @@ namespace BatteryMonitor
             btnMinimize.FlatStyle = FlatStyle.Flat;
             btnMinimize.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnMinimize.ForeColor = Color.White;
-            btnMinimize.Location = new Point(420, 5);
+            btnMinimize.Location = new Point(416, 5);
             btnMinimize.Name = "btnMinimize";
             btnMinimize.Size = new Size(30, 30);
             btnMinimize.TabIndex = 1;
@@ -161,18 +187,6 @@ namespace BatteryMonitor
             chkAlert.UseVisualStyleBackColor = true;
             chkAlert.CheckedChanged += chkAlert_CheckedChanged;
             // 
-            // gradientProgressBar1
-            // 
-            gradientProgressBar1.GradientEnd = Color.MediumPurple;
-            gradientProgressBar1.GradientStart = Color.LightSeaGreen;
-            gradientProgressBar1.Location = new Point(130, 148);
-            gradientProgressBar1.Maximum = 100;
-            gradientProgressBar1.Name = "gradientProgressBar1";
-            gradientProgressBar1.Size = new Size(321, 23);
-            gradientProgressBar1.TabIndex = 3;
-            gradientProgressBar1.Text = "gradientProgressBar1";
-            gradientProgressBar1.Value = 0;
-            // 
             // panelConfig
             // 
             panelConfig.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -180,9 +194,9 @@ namespace BatteryMonitor
             panelConfig.BorderStyle = BorderStyle.FixedSingle;
             panelConfig.Controls.Add(lblConfigUpper);
             panelConfig.Controls.Add(lblConfigLower);
-            panelConfig.Location = new Point(130, 195);
+            panelConfig.Location = new Point(134, 189);
             panelConfig.Name = "panelConfig";
-            panelConfig.Size = new Size(321, 0);
+            panelConfig.Size = new Size(324, 0);
             panelConfig.TabIndex = 8;
             // 
             // chkViewConfig
@@ -195,20 +209,37 @@ namespace BatteryMonitor
             chkViewConfig.Text = "View Configuration";
             chkViewConfig.UseVisualStyleBackColor = true;
             // 
+            // gradientProgressBar1
+            // 
+            gradientProgressBar1.GradientEnd = Color.MediumPurple;
+            gradientProgressBar1.GradientStart = Color.LightSeaGreen;
+            gradientProgressBar1.Location = new Point(134, 148);
+            gradientProgressBar1.Maximum = 100;
+            gradientProgressBar1.Name = "gradientProgressBar1";
+            gradientProgressBar1.Size = new Size(324, 23);
+            gradientProgressBar1.TabIndex = 9;
+            gradientProgressBar1.Text = "gradientProgressBar1";
+            gradientProgressBar1.Value = 0;
+            // 
+            // notifyIcon1
+            // 
+            notifyIcon1.Text = "notifyIcon1";
+            notifyIcon1.Visible = true;
+            // 
             // Monitor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Honeydew;
-            ClientSize = new Size(500, 250);
+            ClientSize = new Size(500, 234);
+            Controls.Add(gradientProgressBar1);
+            Controls.Add(lblBatteryPercent);
+            Controls.Add(lblStatus);
             Controls.Add(chkViewConfig);
             Controls.Add(panelConfig);
             Controls.Add(chkAlert);
-            Controls.Add(gradientProgressBar1);
             Controls.Add(panelTop);
             Controls.Add(pictureBoxBattery);
-            Controls.Add(lblBatteryPercent);
-            Controls.Add(lblStatus);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -223,11 +254,6 @@ namespace BatteryMonitor
             ResumeLayout(false);
             PerformLayout();
         }
-        private System.ComponentModel.IContainer components;
-        private Controls.GradientProgressBar gradientProgressBar1;
-        private CheckBox chkAlert;
-        private Panel panelConfig;
-        private CheckBox chkViewConfig;
-        private System.Windows.Forms.Timer configSlideTimer;
+
     }
 }

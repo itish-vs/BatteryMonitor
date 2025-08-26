@@ -44,6 +44,7 @@ namespace BatteryMonitor
         private int upperAlertCounter = 0;
         private int lowerAlertCounter = 0;
         private static int irndradius = 20;
+        private NotifyIcon? trayIcon;
         // Overlay controls
         private Panel? startupOverlay;
         private Label? startupLabel;
@@ -80,13 +81,23 @@ namespace BatteryMonitor
                 LoadSettings();
                 ValidateSettings();
                 this.Icon = Properties.Resources.BatteryIcon;
-
+                trayIcon = new NotifyIcon();
+                trayIcon.Icon = this.Icon;
+                trayIcon.Visible = true;
+                trayIcon.Text = "Battery Monitor";
+                trayIcon.DoubleClick += (s, e) =>
+                {
+                    this.Show();
+                    this.WindowState = FormWindowState.Normal;
+                    this.BringToFront();
+                    this.Activate();
+                };
                 // Set rounded corners (e.g., 30px radius)
                 SetRoundedCorners(irndradius);
 
                 // Start timer
                 timer = new System.Windows.Forms.Timer();
-                timer.Interval = 2000; // 2 seconds
+                timer.Interval = 4000; // 4 seconds
                 timer.Tick += Timer_Tick;
                 timer.Start();
 
@@ -101,7 +112,14 @@ namespace BatteryMonitor
                 }
                 btnClose.MouseEnter += (s, e) => btnClose.BackColor = Color.Red;
                 btnClose.MouseLeave += (s, e) => btnClose.BackColor = Color.Transparent;
-
+                btnTray.MouseEnter += (s, e) => btnTray.ForeColor = Color.DarkGreen;
+                btnTray.MouseEnter += (s, e) => btnTray.BackColor = Color.Transparent;
+                btnTray.MouseLeave += (s, e) => btnTray.ForeColor = Color.Transparent;
+                btnTray.MouseLeave += (s, e) => btnTray.BackColor = Color.Transparent;
+                btnMinimize.MouseEnter += (s, e) => btnMinimize.ForeColor = Color.DarkGreen;
+                btnMinimize.MouseEnter += (s, e) => btnMinimize.BackColor = Color.Transparent;
+                btnMinimize.MouseLeave += (s, e) => btnMinimize.ForeColor = Color.Transparent;
+                btnMinimize.MouseLeave += (s, e) => btnMinimize.BackColor = Color.Transparent;
                 SetRobotoFont(this);
 
                 // Wire up events
@@ -280,7 +298,7 @@ namespace BatteryMonitor
         /// <summary>
         /// Timer tick event to update battery status
         /// </summary>
-        private void Timer_Tick(object? sender, EventArgs e)
+        private async void Timer_Tick(object? sender, EventArgs e)
         {
             try
             {
@@ -304,7 +322,7 @@ namespace BatteryMonitor
             }
             finally
             {
-              //  await Task.Delay(500); // slight delay to ensure UI updates
+                await Task.Delay(500); // slight delay to ensure UI updates
             }
         }
 
@@ -329,7 +347,7 @@ namespace BatteryMonitor
 
             if (chargeStatus == BatteryChargeStatus.NoSystemBattery)
             {
-                throw new Exception("No Battery Detected!!");
+                 throw new Exception("No Battery Detected!!");
             }
 
             if (batteryLevel == 100)
@@ -340,7 +358,7 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.DarkGreen;
                 lblBatteryPercent.ForeColor = Color.DarkGreen;
                 gradientProgressBar1.ForeColor = Color.DarkGreen;
-                animatedImage = Properties.Resources.FullCharge;  
+                animatedImage = Properties.Resources.FullCharge;
                 if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
                     ShowAndFocus();
@@ -349,7 +367,8 @@ namespace BatteryMonitor
                     StartAlertSound(settings.FullBatterySound);
                     isAlertCompleted = true;
                 }
-                else {                     // Reset if not charging
+                else
+                {                     // Reset if not charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -364,17 +383,18 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.Green;
                 lblBatteryPercent.ForeColor = Color.Green;
                 gradientProgressBar1.ForeColor = Color.Green;
-                animatedImage = Properties.Resources.AlmostFull;               
+                animatedImage = Properties.Resources.AlmostFull;
                 if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
-          
+
                     ShowAndFocus();
                     upperAlertCounter++;
                     lowerAlertCounter = 0;
                     StartAlertSound(settings.FullBatterySound);
                     isAlertCompleted = true;
                 }
-                else {                     // Reset if not charging
+                else
+                {                     // Reset if not charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -389,7 +409,7 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.YellowGreen;
                 lblBatteryPercent.ForeColor = Color.YellowGreen;
                 gradientProgressBar1.ForeColor = Color.YellowGreen;
-                animatedImage = Properties.Resources.MidHigh;
+                animatedImage = Properties.Resources.LowMid;
             }
             else if (batteryLevel > settings.LowerThreshold)
             {
@@ -409,7 +429,7 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.Red;
                 lblBatteryPercent.ForeColor = Color.Red;
                 gradientProgressBar1.ForeColor = Color.Red;
-                animatedImage = Properties.Resources.LowCharging;          
+                animatedImage = Properties.Resources.LowCharging;
                 if (!chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
                     ShowAndFocus();
@@ -442,16 +462,22 @@ namespace BatteryMonitor
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
                 lblStatus.ForeColor = Color.Blue;
-                pictureBoxBattery.Image = animatedImage;
+                pictureBoxBattery.Image = Properties.Resources.BatteryCharging;
+                pictureBoxBattery.Width = 54;
+                pictureBoxBattery.Height = 64;
+                pictureBoxBattery.Location = new Point(62, 78);
             }
             else
             {
+                pictureBoxBattery.Width = 94;
+                pictureBoxBattery.Height = 64;
+                pictureBoxBattery.Location = new Point(42, 80);
                 if (animatedImage != null)
                 {
                     pictureBoxBattery.Image = new Bitmap(animatedImage);
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -479,7 +505,7 @@ namespace BatteryMonitor
         {
             try
             {
-                      
+
                 if (chkAlert != null && chkAlert.Checked) { return; } // Alert muted
                 if (string.IsNullOrWhiteSpace(fileName))
                     return;
@@ -573,7 +599,7 @@ namespace BatteryMonitor
 
                 alertSoundStartTime = null;
                 currentAlertSoundFile = null;
-               
+
             }
             catch { /* swallow any cleanup exceptions */ }
         }
@@ -767,7 +793,7 @@ namespace BatteryMonitor
 
         private void chkAlert_CheckedChanged(object sender, EventArgs e)
         {
-            if(chkAlert.Checked)
+            if (chkAlert.Checked)
             {
                 StopAlertSound();
             }
@@ -779,7 +805,17 @@ namespace BatteryMonitor
                 // Restart timer to check battery status immediately
                 Timer_Tick(null, EventArgs.Empty);
             }
-            
+
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            StopAlertSound();
+            if (trayIcon != null) trayIcon.Visible = false;
+            base.OnFormClosing(e);
+        }
+        private void btnTray_Click(object sender, EventArgs e)
+        {
+            this.Hide();
         }
     }
 
