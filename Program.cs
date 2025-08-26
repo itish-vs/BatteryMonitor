@@ -20,7 +20,7 @@ namespace BatteryMonitor
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
                 var assemblyName = new System.Reflection.AssemblyName(args.Name).Name + ".dll";
-                var dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName);
+                var dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", assemblyName);
                 if (File.Exists(dataPath))
                     return System.Reflection.Assembly.LoadFrom(dataPath);
                 return null;
