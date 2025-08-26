@@ -18,8 +18,9 @@
 
 ---
 📣 Screenshots
-- 📸 <img width="503" height="248" alt="image" src="https://github.com/user-attachments/assets/847be0c5-672c-4ce7-a691-058bc6c61478" />
-- 📸 <img width="502" height="249" alt="image" src="https://github.com/user-attachments/assets/a8272292-8a11-4150-abf9-feb2130919bc" /> 
+- 📸 <img width="500" height="234" alt="image" src="https://github.com/user-attachments/assets/a17f69b1-779d-4a67-8fc5-2eaa3ebc16b0" />
+- 📸 <img width="500" height="234" alt="image" src="https://github.com/user-attachments/assets/ee1f8bae-8aa3-493e-96df-6d18a02c2daa" />
+- 📸 <img width="500" height="234" alt="image" src="https://github.com/user-attachments/assets/8c63d1fc-0cf1-4107-b02c-2a749d87b94a" />
 ---
 ## ⚙️ Configuration
 
