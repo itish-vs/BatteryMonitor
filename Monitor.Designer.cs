@@ -249,7 +249,7 @@ namespace BatteryMonitor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.Honeydew;
+            BackColor = Color.FloralWhite;
             ClientSize = new Size(500, 234);
             Controls.Add(lblConfig);
             Controls.Add(tglConfig);

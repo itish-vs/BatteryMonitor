@@ -62,7 +62,7 @@ namespace BatteryMonitor.Controls
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             Rectangle rect = new Rectangle(0, 0, Width, Height);
 
-            using (SolidBrush backBrush = new SolidBrush(Color.LightGray))
+            using (SolidBrush backBrush = new SolidBrush(Color.Beige))
                 e.Graphics.FillRectangle(backBrush, rect);
 
             int fillWidth = (int)((float)value / max * Width);
@@ -78,7 +78,7 @@ namespace BatteryMonitor.Controls
 
             string percent = $"{(int)((float)value / max * 100)}%";
             var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-            e.Graphics.DrawString(percent, Font, Brushes.White, rect, sf);
+            e.Graphics.DrawString(percent, Font, Brushes.Black, rect, sf);
         }
     }
 }
