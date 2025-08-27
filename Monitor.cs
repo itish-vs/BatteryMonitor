@@ -81,7 +81,7 @@ namespace BatteryMonitor
                 CreateStartupOverlay();
                 LoadSettings();
                 ValidateSettings();
-                this.Icon = Properties.Resources.BatteryIcon;
+                this.Icon = Properties.Resources.battery;
                 trayIcon = new NotifyIcon();
                 trayIcon.Icon = this.Icon;
                 trayIcon.Visible = true;

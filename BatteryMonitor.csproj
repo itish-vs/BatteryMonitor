@@ -8,16 +8,17 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<StartupObject>BatteryMonitor.Program</StartupObject>
 		<PublishSingleFile>false</PublishSingleFile>
-		<SelfContained>false</SelfContained>
+		<SelfContained>true</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-		<ApplicationIcon>Resources\BatteryIcon.ico</ApplicationIcon>
+		<ApplicationIcon>Resources\battery.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="Resources\AlmostFull.gif" />
 	  <None Remove="Resources\AlmostFull.png" />
+	  <None Remove="Resources\battery.ico" />
 	  <None Remove="Resources\BatteryCharging.gif" />
 	  <None Remove="Resources\FullCharge.gif" />
 	  <None Remove="Resources\FullCharge.png" />
@@ -26,6 +27,10 @@
 	  <None Remove="Resources\LowMid.gif" />
 	  <None Remove="Resources\LowMid.png" />
 	  <None Remove="Resources\MidHigh.gif" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\battery.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -49,11 +54,9 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\AlmostFull.png" />
+		<EmbeddedResource Include="Resources\battery.ico" />
 		<EmbeddedResource Include="Resources\BatteryCharging.gif">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Resources\BatteryIcon.ico">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Resources\FullCharge.png" />
 		<EmbeddedResource Include="Resources\LowCharging.png" />
