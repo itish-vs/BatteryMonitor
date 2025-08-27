@@ -219,7 +219,7 @@ namespace BatteryMonitor
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(376, 48);
+            label1.Location = new Point(368, 48);
             label1.Name = "label1";
             label1.Size = new Size(73, 15);
             label1.TabIndex = 11;
@@ -239,7 +239,7 @@ namespace BatteryMonitor
             // lblConfig
             // 
             lblConfig.AutoSize = true;
-            lblConfig.Location = new Point(376, 71);
+            lblConfig.Location = new Point(368, 71);
             lblConfig.Name = "lblConfig";
             lblConfig.Size = new Size(71, 15);
             lblConfig.TabIndex = 13;
