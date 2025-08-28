@@ -45,6 +45,7 @@ namespace BatteryMonitor
             label1 = new Label();
             tglConfig = new JCS.ToggleSwitch();
             lblConfig = new Label();
+            lblBy = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBoxBattery).BeginInit();
             panelTop.SuspendLayout();
             panelConfig.SuspendLayout();
@@ -95,14 +96,14 @@ namespace BatteryMonitor
             // pictureBoxBattery
             // 
             pictureBoxBattery.BackgroundImageLayout = ImageLayout.Center;
-            pictureBoxBattery.Image = Properties.Resources.BatteryCharging;
             pictureBoxBattery.InitialImage = null;
-            pictureBoxBattery.Location = new Point(42, 80);
+            pictureBoxBattery.Location = new Point(5, 73);
             pictureBoxBattery.Name = "pictureBoxBattery";
-            pictureBoxBattery.Size = new Size(94, 65);
+            pictureBoxBattery.Size = new Size(124, 97);
             pictureBoxBattery.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxBattery.TabIndex = 1;
             pictureBoxBattery.TabStop = false;
+            pictureBoxBattery.Paint += pictureBoxBattery_Paint;
             // 
             // panelTop
             // 
@@ -246,12 +247,24 @@ namespace BatteryMonitor
             lblConfig.TabIndex = 13;
             lblConfig.Text = "View Config";
             // 
+            // lblBy
+            // 
+            lblBy.AutoSize = true;
+            lblBy.Font = new Font("Segoe UI", 7F, FontStyle.Bold);
+            lblBy.Location = new Point(7, 210);
+            lblBy.Name = "lblBy";
+            lblBy.Size = new Size(68, 12);
+            lblBy.TabIndex = 14;
+            lblBy.Text = "©Itish Nigam";
+            lblBy.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // Monitor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FloralWhite;
             ClientSize = new Size(500, 234);
+            Controls.Add(lblBy);
             Controls.Add(lblConfig);
             Controls.Add(tglConfig);
             Controls.Add(label1);
@@ -279,5 +292,6 @@ namespace BatteryMonitor
         private Label label1;
         private JCS.ToggleSwitch tglConfig;
         private Label lblConfig;
+        private Label lblBy;
     }
 }

@@ -59,23 +59,22 @@ namespace BatteryMonitor
 
         // Alert sound controls
         private SoundPlayer? alertPlayer;
-        private System.Windows.Forms.Timer? alertSoundTimer; // handles play/delay loop
+        private System.Windows.Forms.Timer? alertSoundTimer;
         private DateTime? alertSoundStartTime;
-        private int alertPlayDelayMs = 2000; // 2 seconds delay between plays
-        private int alertTotalDurationMs = 30 * 1000; // 30 seconds total
-        private string? currentAlertSoundFile; // currently playing sound path
+        private int alertPlayDelayMs = 2000;
+        private int alertTotalDurationMs = 30 * 1000;
+        private string? currentAlertSoundFile;
         private bool isAlertCompleted = false;
 
         // Config panel sliding
-        private int configPanelTargetHeight = 30; // Adjust as needed
+        private int configPanelTargetHeight = 30;
         private bool configPanelExpanding = false;
-
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="Monitor"/> class.
         /// </summary>
         public Monitor()
         {
@@ -100,16 +99,13 @@ namespace BatteryMonitor
                     this.Activate();
                 };
 
-                // Set rounded corners (e.g., 30px radius)
                 SetRoundedCorners(irndradius);
 
-                // Start timer
                 timer = new System.Windows.Forms.Timer();
-                timer.Interval = 5000; // 5 seconds
+                timer.Interval = 5000;
                 timer.Tick += Timer_Tick;
                 timer.Start();
 
-                // Register drag events for controls
                 foreach (Control ctrl in this.Controls)
                 {
                     if (ctrl is Label || ctrl is PictureBox)
@@ -134,9 +130,8 @@ namespace BatteryMonitor
 
                 SetRobotoFont(this);
 
-                // Wire up events
                 configSlideTimer = new System.Windows.Forms.Timer();
-                configSlideTimer.Interval = 30; // ms, adjust for speed
+                configSlideTimer.Interval = 30;
                 configSlideTimer.Tick += ConfigSlideTimer_Tick;
             }
             catch (Exception ex)
@@ -158,7 +153,7 @@ namespace BatteryMonitor
         #region Overlay Methods
 
         /// <summary>
-        /// Create a semi-transparent overlay panel with a label for startup messages
+        /// Creates a semi-transparent overlay panel with a label for startup messages.
         /// </summary>
         private void CreateStartupOverlay()
         {
@@ -183,10 +178,11 @@ namespace BatteryMonitor
             startupOverlay.Controls.Add(startupLabel);
             this.Controls.Add(startupOverlay);
             startupOverlay.BringToFront();
-            // No need for async/await here
         }
 
-        // In StartOverlayFadeOut(), add a null check before accessing startupOverlay
+        /// <summary>
+        /// Starts the fade out animation for the startup overlay.
+        /// </summary>
         private void StartOverlayFadeOut()
         {
             if (overlayTimer != null)
@@ -196,7 +192,7 @@ namespace BatteryMonitor
                 overlayTimer = null;
             }
 
-            overlayTimer = new System.Windows.Forms.Timer { Interval = 50 }; // fade speed
+            overlayTimer = new System.Windows.Forms.Timer { Interval = 50 };
             overlayTimer.Tick += (s, e) =>
             {
                 overlayAlpha -= 15;
@@ -216,9 +212,9 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Show an error message on the overlay and exit after a delay
+        /// Shows an error message on the overlay and exits after a delay.
         /// </summary>
-        /// <param name="message">Error message to display</param>
+        /// <param name="message">Error message to display.</param>
         private async void ShowErrorOverlay(string message)
         {
             if (startupLabel != null && startupOverlay != null)
@@ -238,7 +234,7 @@ namespace BatteryMonitor
         #region Settings and Validation
 
         /// <summary>
-        /// Load settings from appsettings.json
+        /// Loads settings from appsettings.json.
         /// </summary>
         private void LoadSettings()
         {
@@ -269,7 +265,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Validate settings and sound files
+        /// Validates settings and sound files.
         /// </summary>
         private void ValidateSettings()
         {
@@ -307,12 +303,13 @@ namespace BatteryMonitor
         #region Timer Events
 
         /// <summary>
-        /// Timer tick event to update battery status
+        /// Handles the timer tick event to update battery status.
         /// </summary>
         private async void Timer_Tick(object? sender, EventArgs e)
         {
             try
             {
+                pictureBoxBattery.Invalidate();
                 UpdateBatteryStatus();
                 if (startupOverlay != null && startupOverlay.Visible)
                 {
@@ -333,7 +330,7 @@ namespace BatteryMonitor
             }
             finally
             {
-                await Task.Delay(500); // slight delay to ensure UI updates
+                await Task.Delay(500);
             }
         }
 
@@ -342,7 +339,7 @@ namespace BatteryMonitor
         #region Battery Status and UI
 
         /// <summary>
-        /// Update battery status and UI elements
+        /// Updates battery status and UI elements.
         /// </summary>
         private void UpdateBatteryStatus()
         {
@@ -356,7 +353,6 @@ namespace BatteryMonitor
             this.Text = $"{batteryLevel:F0}% | {status}";
             trayIcon!.Text = $"Battery: {batteryLevel:F0}% | {status}";
             float midThreshold = (settings.UpperThreshold + settings.LowerThreshold) / 2f;
-            Image? animatedImage = null;
 
             if (chargeStatus == BatteryChargeStatus.NoSystemBattery)
             {
@@ -372,7 +368,6 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.DarkGreen;
                 lblBatteryPercent.ForeColor = Color.DarkGreen;
                 gradientProgressBar1.ForeColor = Color.DarkGreen;
-                animatedImage = Properties.Resources.FullCharge;
 
                 if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
@@ -384,7 +379,6 @@ namespace BatteryMonitor
                 }
                 else
                 {
-                    // Reset if not charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -400,7 +394,6 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.Green;
                 lblBatteryPercent.ForeColor = Color.Green;
                 gradientProgressBar1.ForeColor = Color.Green;
-                animatedImage = Properties.Resources.AlmostFull;
 
                 if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
@@ -412,7 +405,6 @@ namespace BatteryMonitor
                 }
                 else
                 {
-                    // Reset if not charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -428,7 +420,6 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.YellowGreen;
                 lblBatteryPercent.ForeColor = Color.YellowGreen;
                 gradientProgressBar1.ForeColor = Color.YellowGreen;
-                animatedImage = Properties.Resources.LowMid;
             }
             else if (batteryLevel > settings.LowerThreshold)
             {
@@ -439,7 +430,6 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.Orange;
                 lblBatteryPercent.ForeColor = Color.Orange;
                 gradientProgressBar1.ForeColor = Color.Orange;
-                animatedImage = Properties.Resources.LowMid;
             }
             else if (batteryLevel <= settings.LowerThreshold)
             {
@@ -450,7 +440,6 @@ namespace BatteryMonitor
                 lblStatus.ForeColor = Color.Red;
                 lblBatteryPercent.ForeColor = Color.Red;
                 gradientProgressBar1.ForeColor = Color.Red;
-                animatedImage = Properties.Resources.LowCharging;
 
                 if (!chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
@@ -462,7 +451,6 @@ namespace BatteryMonitor
                 }
                 else
                 {
-                    // Reset if charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -471,14 +459,12 @@ namespace BatteryMonitor
             }
             else
             {
-                // reset counters and stop sound if no alert
                 upperAlertCounter = 0;
                 lowerAlertCounter = 0;
                 isAlertCompleted = false;
                 StopAlertSound();
             }
 
-            // Animate only if charging
             if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
             {
                 string newStatus = "Status: Charging";
@@ -487,20 +473,11 @@ namespace BatteryMonitor
 
                 lblStatus.ForeColor = Color.Blue;
                 pictureBoxBattery.Image = Properties.Resources.BatteryCharging;
-                pictureBoxBattery.Width = 54;
-                pictureBoxBattery.Height = 64;
-                pictureBoxBattery.Location = new Point(62, 78);
             }
             else
             {
-                pictureBoxBattery.Width = 94;
-                pictureBoxBattery.Height = 64;
-                pictureBoxBattery.Location = new Point(42, 80);
-
-                if (animatedImage != null)
-                {
-                    pictureBoxBattery.Image = new Bitmap(animatedImage);
-                }
+                pictureBoxBattery.Image = null;
+                pictureBoxBattery.Invalidate();
             }
         }
 
@@ -522,14 +499,14 @@ namespace BatteryMonitor
         #region Alert Sound Methods
 
         /// <summary>
-        /// Start playing alert sound in a loop with delay until stopped or duration exceeded
+        /// Starts playing alert sound in a loop with delay until stopped or duration exceeded.
         /// </summary>
-        /// <param name="fileName">Sound file name to play</param>
+        /// <param name="fileName">Sound file name to play.</param>
         private void StartAlertSound(string? fileName)
         {
             try
             {
-                if (tglMute != null && tglMute.Checked) { return; } // Alert muted
+                if (tglMute != null && tglMute.Checked) { return; }
                 if (string.IsNullOrWhiteSpace(fileName))
                     return;
                 if (isAlertCompleted)
@@ -539,28 +516,25 @@ namespace BatteryMonitor
                 if (!File.Exists(soundPath))
                     return;
 
-                // If same sound is playing and timer active, do not restart
                 if (alertSoundTimer != null && alertSoundTimer.Enabled
                     && string.Equals(currentAlertSoundFile, soundPath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
-                // Stop any previous
                 StopAlertSound();
 
                 alertPlayer = new SoundPlayer(soundPath);
                 currentAlertSoundFile = soundPath;
                 alertSoundStartTime = DateTime.Now;
 
-                // Timer for play/delay loop
                 if (alertSoundTimer == null)
                 {
                     alertSoundTimer = new System.Windows.Forms.Timer();
                     alertSoundTimer.Tick += AlertSoundTimer_Tick;
                 }
 
-                alertSoundTimer.Interval = 10; // Start immediately
+                alertSoundTimer.Interval = 10;
                 alertSoundTimer.Start();
             }
             catch (Exception ex)
@@ -570,7 +544,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Timer tick to play alert sound and manage delay and total duration
+        /// Handles the timer tick to play alert sound and manage delay and total duration.
         /// </summary>
         private void AlertSoundTimer_Tick(object? sender, EventArgs e)
         {
@@ -580,30 +554,26 @@ namespace BatteryMonitor
                 return;
             }
 
-            // Check if total duration exceeded
             if ((DateTime.Now - alertSoundStartTime.Value).TotalMilliseconds >= alertTotalDurationMs)
             {
                 StopAlertSound();
                 return;
             }
 
-            // Play sound once
             try
             {
-                alertPlayer.Stop(); // Ensure not overlapping
+                alertPlayer.Stop();
                 alertPlayer.Play();
             }
             catch
             {
-                // ignore
             }
 
-            // Set timer for next play (sound duration + delay)
             alertSoundTimer!.Interval = alertPlayDelayMs;
         }
 
         /// <summary>
-        /// Stop playing alert sound and clean up
+        /// Stops playing alert sound and cleans up.
         /// </summary>
         private void StopAlertSound()
         {
@@ -611,14 +581,14 @@ namespace BatteryMonitor
             {
                 if (alertPlayer != null)
                 {
-                    try { alertPlayer.Stop(); } catch { /* ignore */ }
-                    try { alertPlayer.Dispose(); } catch { /* ignore */ }
+                    try { alertPlayer.Stop(); } catch { }
+                    try { alertPlayer.Dispose(); } catch { }
                     alertPlayer = null;
                 }
 
                 if (alertSoundTimer != null)
                 {
-                    try { alertSoundTimer.Stop(); } catch { /* ignore */ }
+                    try { alertSoundTimer.Stop(); } catch { }
                 }
 
                 alertSoundStartTime = null;
@@ -626,7 +596,6 @@ namespace BatteryMonitor
             }
             catch
             {
-                /* swallow any cleanup exceptions */
             }
         }
 
@@ -635,7 +604,7 @@ namespace BatteryMonitor
         #region Window and UI Events
 
         /// <summary>
-        /// Bring window to front and flash taskbar icon to get user attention
+        /// Brings window to front and flashes taskbar icon to get user attention.
         /// </summary>
         private void ForceAttention()
         {
@@ -683,14 +652,12 @@ namespace BatteryMonitor
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-            // Draw card background
             using (GraphicsPath cardPath = GetRoundedRectPath(rect, radius))
             using (SolidBrush cardBrush = new SolidBrush(this.BackColor))
             {
                 e.Graphics.FillPath(cardBrush, cardPath);
             }
 
-            // Draw border
             using (GraphicsPath borderPath = GetRoundedRectPath(rect, radius))
             using (Pen borderPen = new Pen(Color.FromArgb(60, 60, 60), 2))
             {
@@ -701,6 +668,9 @@ namespace BatteryMonitor
         /// <summary>
         /// Returns a rounded rectangle path.
         /// </summary>
+        /// <param name="rect">Rectangle bounds.</param>
+        /// <param name="radius">Corner radius.</param>
+        /// <returns>GraphicsPath for rounded rectangle.</returns>
         private GraphicsPath GetRoundedRectPath(Rectangle rect, int radius)
         {
             GraphicsPath path = new GraphicsPath();
@@ -767,7 +737,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Override OnResize to keep corners rounded.
+        /// Overrides OnResize to keep corners rounded.
         /// </summary>
         protected override void OnResize(EventArgs e)
         {
@@ -776,16 +746,15 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Timer tick for sliding animation of the configuration panel.
+        /// Handles the timer tick for sliding animation of the configuration panel.
         /// </summary>
         private void ConfigSlideTimer_Tick(object? sender, EventArgs e)
         {
             if (configPanelExpanding)
             {
-                // Slide up (show)
                 if (panelConfig.Height < configPanelTargetHeight)
                 {
-                    panelConfig.Height += 2; // step size
+                    panelConfig.Height += 2;
                     if (panelConfig.Height > configPanelTargetHeight)
                         panelConfig.Height = configPanelTargetHeight;
                 }
@@ -796,7 +765,6 @@ namespace BatteryMonitor
             }
             else
             {
-                // Slide down (hide)
                 if (panelConfig.Height > 0)
                 {
                     panelConfig.Height -= 2;
@@ -811,7 +779,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Handle form closing to clean up resources like tray icon and sounds.
+        /// Handles form closing to clean up resources like tray icon and sounds.
         /// </summary>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -821,7 +789,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Minimize to tray button click handler.
+        /// Handles minimize to tray button click.
         /// </summary>
         private void btnTray_Click(object sender, EventArgs e)
         {
@@ -829,7 +797,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Toggle mute changed handler. Stops alert sound immediately when enabled.
+        /// Handles toggle mute changed event. Stops alert sound immediately when enabled.
         /// </summary>
         private void tglMute_CheckedChanged(object sender, EventArgs e)
         {
@@ -842,13 +810,12 @@ namespace BatteryMonitor
                 upperAlertCounter = 0;
                 lowerAlertCounter = 0;
                 isAlertCompleted = false;
-                // Restart timer to check battery status immediately
                 Timer_Tick(null, EventArgs.Empty);
             }
         }
 
         /// <summary>
-        /// Toggle configuration panel visibility with slide animation.
+        /// Handles toggle configuration panel visibility with slide animation.
         /// </summary>
         private void tglConfig_CheckedChanged(object sender, EventArgs e)
         {
@@ -857,10 +824,103 @@ namespace BatteryMonitor
         }
 
         #endregion
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Gets the current battery percentage.
+        /// </summary>
+        /// <returns>Battery percentage as integer.</returns>
+        private int GetBatteryPercentage()
+        {
+            return (int)(SystemInformation.PowerStatus.BatteryLifePercent * 100);
+        }
+
+        /// <summary>
+        /// Creates a rounded rectangle path.
+        /// </summary>
+        /// <param name="rect">Rectangle bounds.</param>
+        /// <param name="radius">Corner radius.</param>
+        /// <returns>GraphicsPath for rounded rectangle.</returns>
+        private GraphicsPath CreateRoundedRectangle(Rectangle rect, int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            int diameter = radius * 2;
+            path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+            path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+            path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+
+        /// <summary>
+        /// Handles the Paint event for the battery PictureBox to draw the battery icon.
+        /// </summary>
+        private void pictureBoxBattery_Paint(object sender, PaintEventArgs e)
+        {
+            if (pictureBoxBattery.Image != null) return;
+
+            int percent = GetBatteryPercentage();
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            int bodyWidth = pictureBoxBattery.Width / 3;
+            int bodyHeight = pictureBoxBattery.Height - 20;
+            int bodyX = (pictureBoxBattery.Width - bodyWidth) / 2;
+            int bodyY = 10;
+
+            Rectangle body = new Rectangle(bodyX, bodyY, bodyWidth, bodyHeight);
+
+            int capWidth = bodyWidth / 2;
+            int capHeight = 8;
+            int capX = bodyX + (bodyWidth - capWidth) / 2;
+            int capY = bodyY - capHeight;
+            Rectangle cap = new Rectangle(capX, capY, capWidth, capHeight);
+
+            using (GraphicsPath bodyPath = CreateRoundedRectangle(body, 8))
+            using (GraphicsPath capPath = CreateRoundedRectangle(cap, 4))
+            using (Pen pen = new Pen(Color.Black, 4))
+            {
+                g.DrawPath(pen, bodyPath);
+                g.DrawPath(pen, capPath);
+                g.FillPath(Brushes.Transparent, capPath);
+            }
+
+            Color fillColor;
+            if (percent <= 25) fillColor = Color.Red;
+            else if (percent <= 50) fillColor = Color.Orange;
+            else if (percent <= 75) fillColor = Color.Green;
+            else fillColor = Color.DarkGreen;
+
+            int fillHeight = (body.Height - 4) * percent / 100;
+            Rectangle fillRect = new Rectangle(body.X + 2,
+                                               body.Y + body.Height - fillHeight - 2,
+                                               body.Width - 4,
+                                               fillHeight);
+
+            using (SolidBrush brush = new SolidBrush(fillColor))
+            {
+                g.FillRectangle(brush, fillRect);
+            }
+
+            int barCount = 4;
+            int barSpacing = body.Height / barCount;
+            using (Pen barPen = new Pen(Color.White, 1))
+            {
+                for (int i = 1; i < barCount; i++)
+                {
+                    int y = body.Y + i * barSpacing;
+                    g.DrawLine(barPen, body.Left + 4, y, body.Right - 4, y);
+                }
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>
-    /// Settings class to hold configuration values
+    /// Settings class to hold configuration values.
     /// </summary>
     public class BatterySettings
     {

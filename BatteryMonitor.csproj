@@ -16,12 +16,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\AlmostFull.png" />
 	  <None Remove="Resources\battery.ico" />
 	  <None Remove="Resources\BatteryCharging.gif" />
-	  <None Remove="Resources\FullCharge.png" />
-	  <None Remove="Resources\LowCharging.png" />
-	  <None Remove="Resources\LowMid.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -48,14 +44,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\AlmostFull.png" />
 		<EmbeddedResource Include="Resources\battery.ico" />
 		<EmbeddedResource Include="Resources\BatteryCharging.gif">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Resources\FullCharge.png" />
-		<EmbeddedResource Include="Resources\LowCharging.png" />
-		<EmbeddedResource Include="Resources\LowMid.png" />
 	</ItemGroup>
 
 	<ItemGroup>
