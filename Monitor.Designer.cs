@@ -213,6 +213,7 @@ namespace BatteryMonitor
             // 
             // notifyIcon1
             // 
+            notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
             notifyIcon1.Text = "notifyIcon1";
             notifyIcon1.Visible = true;
             // 

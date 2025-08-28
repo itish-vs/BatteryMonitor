@@ -81,7 +81,7 @@ namespace BatteryMonitor.Controls
         /// <summary>
         /// Handles the animation timer tick event to animate the progress bar value.
         /// </summary>
-        private void AnimationTimer_Tick(object sender, EventArgs e)
+        private void AnimationTimer_Tick(object? sender, EventArgs e)
         {
             if (value < animationTarget)
                 value++;

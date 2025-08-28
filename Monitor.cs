@@ -105,7 +105,7 @@ namespace BatteryMonitor
 
                 // Start timer
                 timer = new System.Windows.Forms.Timer();
-                timer.Interval = 4000; // 4 seconds
+                timer.Interval = 5000; // 5 seconds
                 timer.Tick += Timer_Tick;
                 timer.Start();
 
@@ -141,7 +141,7 @@ namespace BatteryMonitor
             }
             catch (Exception ex)
             {
-                Exception inner = ex.InnerException;
+                Exception? inner = ex.InnerException;
                 System.Text.StringBuilder sb = new();
                 while (inner != null)
                 {
@@ -186,9 +186,7 @@ namespace BatteryMonitor
             // No need for async/await here
         }
 
-        /// <summary>
-        /// Start fading out the overlay
-        /// </summary>
+        // In StartOverlayFadeOut(), add a null check before accessing startupOverlay
         private void StartOverlayFadeOut()
         {
             if (overlayTimer != null)
@@ -205,11 +203,13 @@ namespace BatteryMonitor
                 if (overlayAlpha <= 0)
                 {
                     overlayTimer.Stop();
-                    startupOverlay.Visible = false;
+                    if (startupOverlay != null)
+                        startupOverlay.Visible = false;
                 }
                 else
                 {
-                    startupOverlay.BackColor = Color.FromArgb(overlayAlpha, 30, 30, 30);
+                    if (startupOverlay != null)
+                        startupOverlay.BackColor = Color.FromArgb(overlayAlpha, 30, 30, 30);
                 }
             };
             overlayTimer.Start();
@@ -321,7 +321,7 @@ namespace BatteryMonitor
             }
             catch (Exception ex)
             {
-                Exception inner = ex.InnerException;
+                Exception? inner = ex.InnerException;
                 System.Text.StringBuilder sb = new();
                 while (inner != null)
                 {
@@ -354,9 +354,9 @@ namespace BatteryMonitor
             lblBatteryPercent.Text = $"{batteryLevel:F0}%";
             gradientProgressBar1.Value = Math.Min((int)batteryLevel, 100);
             this.Text = $"{batteryLevel:F0}% | {status}";
-
+            trayIcon!.Text = $"Battery: {batteryLevel:F0}% | {status}";
             float midThreshold = (settings.UpperThreshold + settings.LowerThreshold) / 2f;
-            Image animatedImage = null;
+            Image? animatedImage = null;
 
             if (chargeStatus == BatteryChargeStatus.NoSystemBattery)
             {
@@ -733,7 +733,7 @@ namespace BatteryMonitor
         /// <summary>
         /// Handles the MouseDown event for draggable controls to allow moving the window.
         /// </summary>
-        private void panelTop_MouseDown(object sender, MouseEventArgs e)
+        private void panelTop_MouseDown(object? sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -747,7 +747,7 @@ namespace BatteryMonitor
         /// <summary>
         /// Handles the MouseUp event for draggable controls, resetting the cursor.
         /// </summary>
-        private void panelTop_MouseUp(object sender, MouseEventArgs e)
+        private void panelTop_MouseUp(object? sender, MouseEventArgs e)
         {
             this.Cursor = Cursors.Default;
         }
