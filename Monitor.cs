@@ -42,10 +42,15 @@ namespace BatteryMonitor
 
         private const UInt32 FLASHW_ALL = 3;
         private const UInt32 FLASHW_TIMERNOFG = 12;
+
+        // Counters/State
         private int upperAlertCounter = 0;
         private int lowerAlertCounter = 0;
         private static int irndradius = 20;
+
+        // Tray
         private NotifyIcon? trayIcon;
+
         // Overlay controls
         private Panel? startupOverlay;
         private Label? startupLabel;
@@ -82,6 +87,7 @@ namespace BatteryMonitor
                 LoadSettings();
                 ValidateSettings();
                 this.Icon = Properties.Resources.battery;
+
                 trayIcon = new NotifyIcon();
                 trayIcon.Icon = this.Icon;
                 trayIcon.Visible = true;
@@ -93,6 +99,7 @@ namespace BatteryMonitor
                     this.BringToFront();
                     this.Activate();
                 };
+
                 // Set rounded corners (e.g., 30px radius)
                 SetRoundedCorners(irndradius);
 
@@ -111,26 +118,26 @@ namespace BatteryMonitor
                         ctrl.MouseUp += panelTop_MouseUp;
                     }
                 }
+
                 btnClose.MouseEnter += (s, e) => btnClose.BackColor = Color.Red;
                 btnClose.MouseLeave += (s, e) => btnClose.BackColor = Color.Transparent;
+
                 btnTray.MouseEnter += (s, e) => btnTray.ForeColor = Color.DarkGreen;
                 btnTray.MouseEnter += (s, e) => btnTray.BackColor = Color.Transparent;
                 btnTray.MouseLeave += (s, e) => btnTray.ForeColor = Color.Transparent;
                 btnTray.MouseLeave += (s, e) => btnTray.BackColor = Color.Transparent;
+
                 btnMinimize.MouseEnter += (s, e) => btnMinimize.ForeColor = Color.DarkGreen;
                 btnMinimize.MouseEnter += (s, e) => btnMinimize.BackColor = Color.Transparent;
                 btnMinimize.MouseLeave += (s, e) => btnMinimize.ForeColor = Color.Transparent;
                 btnMinimize.MouseLeave += (s, e) => btnMinimize.BackColor = Color.Transparent;
+
                 SetRobotoFont(this);
 
                 // Wire up events
                 configSlideTimer = new System.Windows.Forms.Timer();
                 configSlideTimer.Interval = 30; // ms, adjust for speed
                 configSlideTimer.Tick += ConfigSlideTimer_Tick;
-
-
-
-
             }
             catch (Exception ex)
             {
@@ -172,6 +179,7 @@ namespace BatteryMonitor
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Fill
             };
+
             startupOverlay.Controls.Add(startupLabel);
             this.Controls.Add(startupOverlay);
             startupOverlay.BringToFront();
@@ -210,7 +218,7 @@ namespace BatteryMonitor
         /// <summary>
         /// Show an error message on the overlay and exit after a delay
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Error message to display</param>
         private async void ShowErrorOverlay(string message)
         {
             if (startupLabel != null && startupOverlay != null)
@@ -265,9 +273,9 @@ namespace BatteryMonitor
         /// </summary>
         private void ValidateSettings()
         {
-
             if (!typeof(bool).IsAssignableFrom(settings.MuteAlerts.GetType()))
                 throw new InvalidOperationException("MuteAlerts value must be a boolean (true or false).");
+
             if (settings.UpperThreshold <= 0 || settings.UpperThreshold > 100)
                 throw new InvalidOperationException($"UpperThreshold {settings.UpperThreshold} is out of valid range (1–100).");
 
@@ -284,7 +292,6 @@ namespace BatteryMonitor
                 throw new InvalidOperationException("LowBatterySound file name is missing or empty.");
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-
             string fullSoundPath = Path.Combine(basePath, settings.FullBatterySound);
             string lowSoundPath = Path.Combine(basePath, settings.LowBatterySound);
 
@@ -343,9 +350,11 @@ namespace BatteryMonitor
             float batteryLevel = powerStatus.BatteryLifePercent * 100;
             BatteryChargeStatus chargeStatus = powerStatus.BatteryChargeStatus;
             string status = chargeStatus.ToString() == "0" ? "Discharging" : chargeStatus.ToString();
+
             lblBatteryPercent.Text = $"{batteryLevel:F0}%";
             gradientProgressBar1.Value = Math.Min((int)batteryLevel, 100);
             this.Text = $"{batteryLevel:F0}% | {status}";
+
             float midThreshold = (settings.UpperThreshold + settings.LowerThreshold) / 2f;
             Image animatedImage = null;
 
@@ -359,10 +368,12 @@ namespace BatteryMonitor
                 string newStatus = string.Format("Status: {0}", status);
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
+
                 lblStatus.ForeColor = Color.DarkGreen;
                 lblBatteryPercent.ForeColor = Color.DarkGreen;
                 gradientProgressBar1.ForeColor = Color.DarkGreen;
                 animatedImage = Properties.Resources.FullCharge;
+
                 if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
                     ShowAndFocus();
@@ -372,7 +383,8 @@ namespace BatteryMonitor
                     isAlertCompleted = true;
                 }
                 else
-                {                     // Reset if not charging
+                {
+                    // Reset if not charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -384,13 +396,14 @@ namespace BatteryMonitor
                 string newStatus = string.Format("Status: {0}", status);
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
+
                 lblStatus.ForeColor = Color.Green;
                 lblBatteryPercent.ForeColor = Color.Green;
                 gradientProgressBar1.ForeColor = Color.Green;
                 animatedImage = Properties.Resources.AlmostFull;
+
                 if (chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
-
                     ShowAndFocus();
                     upperAlertCounter++;
                     lowerAlertCounter = 0;
@@ -398,7 +411,8 @@ namespace BatteryMonitor
                     isAlertCompleted = true;
                 }
                 else
-                {                     // Reset if not charging
+                {
+                    // Reset if not charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -410,6 +424,7 @@ namespace BatteryMonitor
                 string newStatus = string.Format("Status: {0}", status);
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
+
                 lblStatus.ForeColor = Color.YellowGreen;
                 lblBatteryPercent.ForeColor = Color.YellowGreen;
                 gradientProgressBar1.ForeColor = Color.YellowGreen;
@@ -420,6 +435,7 @@ namespace BatteryMonitor
                 string newStatus = string.Format("Status: {0}", status);
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
+
                 lblStatus.ForeColor = Color.Orange;
                 lblBatteryPercent.ForeColor = Color.Orange;
                 gradientProgressBar1.ForeColor = Color.Orange;
@@ -430,10 +446,12 @@ namespace BatteryMonitor
                 string newStatus = string.Format("Status: {0}", status);
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
+
                 lblStatus.ForeColor = Color.Red;
                 lblBatteryPercent.ForeColor = Color.Red;
                 gradientProgressBar1.ForeColor = Color.Red;
                 animatedImage = Properties.Resources.LowCharging;
+
                 if (!chargeStatus.HasFlag(BatteryChargeStatus.Charging))
                 {
                     ShowAndFocus();
@@ -443,7 +461,8 @@ namespace BatteryMonitor
                     isAlertCompleted = true;
                 }
                 else
-                {   // Reset if charging
+                {
+                    // Reset if charging
                     upperAlertCounter = 0;
                     lowerAlertCounter = 0;
                     isAlertCompleted = false;
@@ -465,6 +484,7 @@ namespace BatteryMonitor
                 string newStatus = "Status: Charging";
                 if (lblStatus.Text != newStatus)
                     lblStatus.Text = newStatus;
+
                 lblStatus.ForeColor = Color.Blue;
                 pictureBoxBattery.Image = Properties.Resources.BatteryCharging;
                 pictureBoxBattery.Width = 54;
@@ -476,12 +496,12 @@ namespace BatteryMonitor
                 pictureBoxBattery.Width = 94;
                 pictureBoxBattery.Height = 64;
                 pictureBoxBattery.Location = new Point(42, 80);
+
                 if (animatedImage != null)
                 {
                     pictureBoxBattery.Image = new Bitmap(animatedImage);
                 }
             }
-
         }
 
         /// <summary>
@@ -504,19 +524,18 @@ namespace BatteryMonitor
         /// <summary>
         /// Start playing alert sound in a loop with delay until stopped or duration exceeded
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">Sound file name to play</param>
         private void StartAlertSound(string? fileName)
         {
             try
             {
-
                 if (tglMute != null && tglMute.Checked) { return; } // Alert muted
                 if (string.IsNullOrWhiteSpace(fileName))
                     return;
                 if (isAlertCompleted)
                     return;
-                string soundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
+                string soundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
                 if (!File.Exists(soundPath))
                     return;
 
@@ -540,6 +559,7 @@ namespace BatteryMonitor
                     alertSoundTimer = new System.Windows.Forms.Timer();
                     alertSoundTimer.Tick += AlertSoundTimer_Tick;
                 }
+
                 alertSoundTimer.Interval = 10; // Start immediately
                 alertSoundTimer.Start();
             }
@@ -573,7 +593,10 @@ namespace BatteryMonitor
                 alertPlayer.Stop(); // Ensure not overlapping
                 alertPlayer.Play();
             }
-            catch { /* ignore */ }
+            catch
+            {
+                // ignore
+            }
 
             // Set timer for next play (sound duration + delay)
             alertSoundTimer!.Interval = alertPlayDelayMs;
@@ -588,24 +611,23 @@ namespace BatteryMonitor
             {
                 if (alertPlayer != null)
                 {
-                    try { alertPlayer.Stop(); }
-                    catch { /* ignore */ }
-                    try { alertPlayer.Dispose(); }
-                    catch { /* ignore */ }
+                    try { alertPlayer.Stop(); } catch { /* ignore */ }
+                    try { alertPlayer.Dispose(); } catch { /* ignore */ }
                     alertPlayer = null;
                 }
 
                 if (alertSoundTimer != null)
                 {
-                    try { alertSoundTimer.Stop(); }
-                    catch { /* ignore */ }
+                    try { alertSoundTimer.Stop(); } catch { /* ignore */ }
                 }
 
                 alertSoundStartTime = null;
                 currentAlertSoundFile = null;
-
             }
-            catch { /* swallow any cleanup exceptions */ }
+            catch
+            {
+                /* swallow any cleanup exceptions */
+            }
         }
 
         #endregion
@@ -620,12 +642,14 @@ namespace BatteryMonitor
             IntPtr hWnd = this.Handle;
             SetForegroundWindow(hWnd);
 
-            FLASHWINFO fw = new FLASHWINFO();
-            fw.cbSize = Convert.ToUInt32(Marshal.SizeOf(fw));
-            fw.hwnd = hWnd;
-            fw.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
-            fw.uCount = UInt32.MaxValue;
-            fw.dwTimeout = 0;
+            FLASHWINFO fw = new FLASHWINFO
+            {
+                cbSize = Convert.ToUInt32(Marshal.SizeOf(typeof(FLASHWINFO))),
+                hwnd = hWnd,
+                dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG,
+                uCount = UInt32.MaxValue,
+                dwTimeout = 0
+            };
 
             FlashWindowEx(ref fw);
         }
@@ -742,7 +766,9 @@ namespace BatteryMonitor
             }
         }
 
-        // Override OnResize to keep corners rounded
+        /// <summary>
+        /// Override OnResize to keep corners rounded.
+        /// </summary>
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -750,7 +776,7 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Timer tick for sliding animation
+        /// Timer tick for sliding animation of the configuration panel.
         /// </summary>
         private void ConfigSlideTimer_Tick(object? sender, EventArgs e)
         {
@@ -784,20 +810,27 @@ namespace BatteryMonitor
             }
         }
 
-        #endregion
-
-
+        /// <summary>
+        /// Handle form closing to clean up resources like tray icon and sounds.
+        /// </summary>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             StopAlertSound();
             if (trayIcon != null) trayIcon.Visible = false;
             base.OnFormClosing(e);
         }
+
+        /// <summary>
+        /// Minimize to tray button click handler.
+        /// </summary>
         private void btnTray_Click(object sender, EventArgs e)
         {
             this.Hide();
         }
 
+        /// <summary>
+        /// Toggle mute changed handler. Stops alert sound immediately when enabled.
+        /// </summary>
         private void tglMute_CheckedChanged(object sender, EventArgs e)
         {
             if (tglMute.Checked)
@@ -814,11 +847,16 @@ namespace BatteryMonitor
             }
         }
 
+        /// <summary>
+        /// Toggle configuration panel visibility with slide animation.
+        /// </summary>
         private void tglConfig_CheckedChanged(object sender, EventArgs e)
         {
             configPanelExpanding = tglConfig.Checked;
             configSlideTimer.Start();
         }
+
+        #endregion
     }
 
     /// <summary>

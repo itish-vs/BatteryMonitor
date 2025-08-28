@@ -16,18 +16,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="appsettings.json" />
-	  <None Remove="Resources\AlmostFull.gif" />
 	  <None Remove="Resources\AlmostFull.png" />
 	  <None Remove="Resources\battery.ico" />
 	  <None Remove="Resources\BatteryCharging.gif" />
-	  <None Remove="Resources\FullCharge.gif" />
 	  <None Remove="Resources\FullCharge.png" />
-	  <None Remove="Resources\LowCharging.gif" />
 	  <None Remove="Resources\LowCharging.png" />
-	  <None Remove="Resources\LowMid.gif" />
 	  <None Remove="Resources\LowMid.png" />
-	  <None Remove="Resources\MidHigh.gif" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,6 +29,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="appsettings.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Resources\Full Battery.wav">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -51,13 +48,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="appsettings.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 		<EmbeddedResource Include="Resources\AlmostFull.png" />
 		<EmbeddedResource Include="Resources\battery.ico" />
 		<EmbeddedResource Include="Resources\BatteryCharging.gif">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Resources\FullCharge.png" />
 		<EmbeddedResource Include="Resources\LowCharging.png" />
@@ -81,9 +75,9 @@
 	<!-- Move appsettings.json to the 'resources' folder on publish -->
 	<Target Name="MoveAppSettingsToResources" AfterTargets="Publish">
 	  <ItemGroup>
-	    <PublishedAppSettings Include="$(PublishDir)appsettings.json" />
+		<PublishedAppSettings Include="$(PublishDir)appsettings.json" />
 	  </ItemGroup>
-	  <Move SourceFiles="@(PublishedAppSettings)" DestinationFolder="$(PublishDir)resources\" />
+	  <Move SourceFiles="@(PublishedAppSettings)" DestinationFolder="$(PublishDir)Resources\" />
 	</Target>
 	<!-- Move all DLLs (except the main EXE) to the 'data' folder on publish -->
 	<Target Name="MoveDllsToDataFolder" AfterTargets="Publish">
@@ -92,10 +86,4 @@
 	  </ItemGroup>
 	  <Move SourceFiles="@(PublishedDlls)" DestinationFolder="$(PublishDir)data\" />
 	</Target>
-	<ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-	  </None>
-	</ItemGroup>
 </Project>
