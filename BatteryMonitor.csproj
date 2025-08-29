@@ -7,7 +7,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<StartupObject>BatteryMonitor.Program</StartupObject>
-		<PublishSingleFile>false</PublishSingleFile>
+		<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>false</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
@@ -25,14 +25,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="appsettings.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<None Update="Resources\appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
 		<None Update="Resources\Full Battery.wav">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
 		<None Update="Resources\Low Battery.wav">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
 	</ItemGroup>
 
@@ -64,18 +70,4 @@
 	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
-	<!-- Move appsettings.json to the 'resources' folder on publish -->
-	<Target Name="MoveAppSettingsToResources" AfterTargets="Publish">
-	  <ItemGroup>
-		<PublishedAppSettings Include="$(PublishDir)appsettings.json" />
-	  </ItemGroup>
-	  <Move SourceFiles="@(PublishedAppSettings)" DestinationFolder="$(PublishDir)Resources\" />
-	</Target>
-	<!-- Move all DLLs (except the main EXE) to the 'data' folder on publish -->
-	<Target Name="MoveDllsToDataFolder" AfterTargets="Publish">
-	  <ItemGroup>
-	    <PublishedDlls Include="$(PublishDir)*.dll" Exclude="$(PublishDir)$(AssemblyName).dll" />
-	  </ItemGroup>
-	  <Move SourceFiles="@(PublishedDlls)" DestinationFolder="$(PublishDir)data\" />
-	</Target>
 </Project>

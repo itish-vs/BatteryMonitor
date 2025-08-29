@@ -236,19 +236,47 @@ namespace BatteryMonitor
         /// <summary>
         /// Loads settings from appsettings.json.
         /// </summary>
+        /// <summary>
+        /// Loads settings from appsettings.json.
+        /// </summary>
         private void LoadSettings()
         {
+            // Try several locations so a single-file publish that extracts to a temp folder
+            // can still find an external appsettings.json placed next to the published EXE.
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string resourcePath = Path.Combine(baseDir, "resources", "appsettings.json");
-            string rootPath = Path.Combine(baseDir, "appsettings.json");
-            string configPath = File.Exists(resourcePath) ? resourcePath : rootPath;
+            string? exePath = null;
+#if NET8_0_OR_GREATER
+            exePath = Environment.ProcessPath; // .NET 6+ property, returns the original process path when available
+#endif
+            if (string.IsNullOrEmpty(exePath))
+                exePath = Environment.GetCommandLineArgs().FirstOrDefault() ?? baseDir;
 
-            if (!File.Exists(configPath))
-                throw new FileNotFoundException($"appsettings.json not found in resources or root folder. Checked:\n{resourcePath}\n{rootPath}");
+            string resourcePathBase = Path.Combine(baseDir, "Resources", "appsettings.json");
+            string rootPathBase = Path.Combine(baseDir, "appsettings.json");
+            string resourcePathExe = Path.Combine(Path.GetDirectoryName(exePath) ?? baseDir, "Resources", "appsettings.json");
+            string rootPathExe = Path.Combine(Path.GetDirectoryName(exePath) ?? baseDir, "appsettings.json");
+
+            string? configPath = null;
+            string[] checkedPaths = { resourcePathBase, rootPathBase, resourcePathExe, rootPathExe };
+            foreach (var p in checkedPaths)
+            {
+                if (File.Exists(p))
+                {
+                    configPath = p;
+                    break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(configPath))
+            {
+                System.Text.StringBuilder sb = new();
+                foreach (var p in checkedPaths) sb.AppendLine(p);
+                throw new FileNotFoundException($"appsettings.json not found in resources or root folder. Checked:\n{sb.ToString().Trim()}");
+            }
 
             var config = new ConfigurationBuilder()
-                .SetBasePath(baseDir)
-                .AddJsonFile(configPath, optional: false, reloadOnChange: true)
+                .SetBasePath(Path.GetDirectoryName(configPath) ?? baseDir)
+                .AddJsonFile(Path.GetFileName(configPath), optional: false, reloadOnChange: true)
                 .Build();
 
             settings = config.GetSection("BatteryMonitor").Get<BatterySettings>()!;
@@ -265,7 +293,54 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Validates settings and sound files.
+        /// Resolve an external file by checking multiple likely locations:
+        /// - publish extraction folder (AppDomain.CurrentDomain.BaseDirectory)
+        /// - publish root next to EXE (Environment.ProcessPath or command line)
+        /// - "resources" / "Resources" subfolders in both locations
+        /// Returns full path when found, otherwise null.
+        /// </summary>
+        private string? ResolveExternalFile(string relativePath)
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string? exePath = null;
+#if NET8_0_OR_GREATER
+            exePath = Environment.ProcessPath;
+#endif
+            if (string.IsNullOrEmpty(exePath))
+                exePath = Environment.GetCommandLineArgs().FirstOrDefault() ?? baseDir;
+
+            string exeDir = Path.GetDirectoryName(exePath) ?? baseDir;
+            string fileName = Path.GetFileName(relativePath);
+
+            var candidates = new[]
+            {
+                Path.Combine(baseDir, relativePath),
+                Path.Combine(baseDir, fileName),
+                Path.Combine(baseDir, "Resources", fileName),
+                Path.Combine(exeDir, relativePath),
+                Path.Combine(exeDir, fileName),
+                Path.Combine(exeDir, "Resources", fileName)
+            };
+
+            foreach (var c in candidates)
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(c) && File.Exists(c))
+                        return c;
+                }
+                catch
+                {
+                    // ignore any path access exceptions and try next candidate
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Validates settings and sound files. Sound files are resolved using ResolveExternalFile so
+        /// they can live next to the EXE (publish root) or inside resources folders.
         /// </summary>
         private void ValidateSettings()
         {
@@ -287,15 +362,14 @@ namespace BatteryMonitor
             if (string.IsNullOrWhiteSpace(settings.LowBatterySound))
                 throw new InvalidOperationException("LowBatterySound file name is missing or empty.");
 
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string fullSoundPath = Path.Combine(basePath, settings.FullBatterySound);
-            string lowSoundPath = Path.Combine(basePath, settings.LowBatterySound);
+            string? fullSoundPath = ResolveExternalFile(settings.FullBatterySound);
+            string? lowSoundPath = ResolveExternalFile(settings.LowBatterySound);
 
-            if (!File.Exists(fullSoundPath))
-                throw new FileNotFoundException($"FullBatterySound file not found: {fullSoundPath}");
+            if (string.IsNullOrEmpty(fullSoundPath))
+                throw new FileNotFoundException($"FullBatterySound file not found. Checked locations for: {settings.FullBatterySound}");
 
-            if (!File.Exists(lowSoundPath))
-                throw new FileNotFoundException($"LowBatterySound file not found: {lowSoundPath}");
+            if (string.IsNullOrEmpty(lowSoundPath))
+                throw new FileNotFoundException($"LowBatterySound file not found. Checked locations for: {settings.LowBatterySound}");
         }
 
         #endregion
@@ -506,35 +580,39 @@ namespace BatteryMonitor
         {
             try
             {
-                if (tglMute != null && tglMute.Checked) { return; }
+                if (tglMute != null && tglMute.Checked) { return; } // Alert muted
                 if (string.IsNullOrWhiteSpace(fileName))
                     return;
                 if (isAlertCompleted)
                     return;
 
-                string soundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-                if (!File.Exists(soundPath))
+                // Try to resolve the file in multiple locations
+                string? soundPath = ResolveExternalFile(fileName);
+                if (string.IsNullOrWhiteSpace(soundPath))
                     return;
 
+                // If same sound is playing and timer active, do not restart
                 if (alertSoundTimer != null && alertSoundTimer.Enabled
                     && string.Equals(currentAlertSoundFile, soundPath, StringComparison.OrdinalIgnoreCase))
                 {
                     return;
                 }
 
+                // Stop any previous
                 StopAlertSound();
 
                 alertPlayer = new SoundPlayer(soundPath);
                 currentAlertSoundFile = soundPath;
                 alertSoundStartTime = DateTime.Now;
 
+                // Timer for play/delay loop
                 if (alertSoundTimer == null)
                 {
                     alertSoundTimer = new System.Windows.Forms.Timer();
                     alertSoundTimer.Tick += AlertSoundTimer_Tick;
                 }
 
-                alertSoundTimer.Interval = 10;
+                alertSoundTimer.Interval = 10; // Start immediately
                 alertSoundTimer.Start();
             }
             catch (Exception ex)
