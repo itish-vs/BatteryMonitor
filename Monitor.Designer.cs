@@ -46,6 +46,7 @@ namespace BatteryMonitor
             tglConfig = new JCS.ToggleSwitch();
             lblConfig = new Label();
             lblBy = new Label();
+            lblTimeRemaining = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBoxBattery).BeginInit();
             panelTop.SuspendLayout();
             panelConfig.SuspendLayout();
@@ -184,7 +185,7 @@ namespace BatteryMonitor
             panelConfig.BorderStyle = BorderStyle.FixedSingle;
             panelConfig.Controls.Add(lblConfigUpper);
             panelConfig.Controls.Add(lblConfigLower);
-            panelConfig.Location = new Point(134, 189);
+            panelConfig.Location = new Point(134, 190);
             panelConfig.Name = "panelConfig";
             panelConfig.Size = new Size(324, 0);
             panelConfig.TabIndex = 8;
@@ -258,12 +259,22 @@ namespace BatteryMonitor
             lblBy.Text = "©Itish Nigam";
             lblBy.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // lblTimeRemaining
+            // 
+            lblTimeRemaining.AutoSize = true;
+            lblTimeRemaining.Location = new Point(134, 173);
+            lblTimeRemaining.Name = "lblTimeRemaining";
+            lblTimeRemaining.Size = new Size(121, 15);
+            lblTimeRemaining.TabIndex = 15;
+            lblTimeRemaining.Text = "Time Remaining: N/A";
+            // 
             // Monitor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FloralWhite;
             ClientSize = new Size(500, 234);
+            Controls.Add(lblTimeRemaining);
             Controls.Add(lblBy);
             Controls.Add(lblConfig);
             Controls.Add(tglConfig);
@@ -293,5 +304,6 @@ namespace BatteryMonitor
         private JCS.ToggleSwitch tglConfig;
         private Label lblConfig;
         private Label lblBy;
+        private Label lblTimeRemaining;
     }
 }
