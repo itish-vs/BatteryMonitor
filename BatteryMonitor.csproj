@@ -16,6 +16,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove=".gitattributes" />
+	  <None Remove=".gitignore" />
+	  <None Remove="LICENSE.txt" />
+	  <None Remove="README.md" />
 	  <None Remove="Resources\battery.ico" />
 	  <None Remove="Resources\BatteryCharging.gif" />
 	</ItemGroup>

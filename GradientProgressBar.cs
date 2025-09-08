@@ -1,8 +1,5 @@
-using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 
 namespace BatteryMonitor.Controls
 {
@@ -123,7 +120,7 @@ namespace BatteryMonitor.Controls
 
             string percent = $"{(int)((float)value / max * 100)}%";
             var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-           // e.Graphics.DrawString(percent, Font, Brushes.Black, rect, sf);
+            // e.Graphics.DrawString(percent, Font, Brushes.Black, rect, sf);
         }
 
         #endregion
