@@ -190,12 +190,13 @@ namespace BatteryMonitor
             button1.FlatStyle = FlatStyle.Flat;
             button1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             button1.ForeColor = Color.Blue;
-            button1.Location = new Point(72, 201);
+            button1.Location = new Point(69, 202);
             button1.Name = "button1";
             button1.Size = new Size(19, 23);
             button1.TabIndex = 18;
             button1.Text = "?";
             button1.TextAlign = ContentAlignment.MiddleLeft;
+            button1.TextImageRelation = TextImageRelation.TextAboveImage;
             toolTip1.SetToolTip(button1, "About");
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
@@ -305,7 +306,6 @@ namespace BatteryMonitor
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FloralWhite;
             ClientSize = new Size(500, 234);
-            Controls.Add(button1);
             Controls.Add(lblBatteryHealth);
             Controls.Add(lblTimeRemaining);
             Controls.Add(lblBy);
@@ -319,6 +319,7 @@ namespace BatteryMonitor
             Controls.Add(panelTop);
             Controls.Add(pictureBoxBattery);
             Controls.Add(tglMute);
+            Controls.Add(button1);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
             Icon = (Icon)resources.GetObject("$this.Icon");
