@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Drawing.Drawing2D;
+using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 
@@ -178,7 +179,6 @@ namespace BatteryMonitor
                 ShowErrorOverlay(sb.Length > 0 ? sb.ToString().Trim() : ex.Message);
             }
         }
-
         #endregion
 
         #region Form and Control Events
@@ -382,6 +382,17 @@ namespace BatteryMonitor
                 {
                     configSlideTimer?.Stop();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handles the click event for the 'About' button.
+        /// </summary>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (var about = new AboutForm())
+            {
+                about.ShowDialog(this);
             }
         }
 
@@ -607,6 +618,17 @@ namespace BatteryMonitor
 
             // Update charging/discharging specific UI
             UpdateChargeTimeEstimate(powerStatus, batteryLevel, chargeStatus);
+
+            var (design, full) = GetBatteryInfo();
+            if (design > 0 && full > 0)
+            {
+                double healthPercent = (double)full / design * 100;
+                lblBatteryHealth.Text = $"Battery Health: {healthPercent:F1}%";
+            }
+            else
+            {
+                lblBatteryHealth.Text = "Battery Health: N/A";
+            }
         }
 
         /// <summary>
@@ -665,29 +687,6 @@ namespace BatteryMonitor
         }
 
         /// <summary>
-        /// Handles the logic for triggering an alert.
-        /// </summary>
-        private void HandleAlertCondition(bool isUpper, string soundFile)
-        {
-            ShowAndFocus();
-            if (isUpper) upperAlertCounter++; else lowerAlertCounter++;
-            if (isUpper) lowerAlertCounter = 0; else upperAlertCounter = 0;
-            StartAlertSound(soundFile);
-            isAlertCompleted = true;
-        }
-
-        /// <summary>
-        /// Resets alert counters and stops any active alert sound.
-        /// </summary>
-        private void ResetAlertState()
-        {
-            upperAlertCounter = 0;
-            lowerAlertCounter = 0;
-            isAlertCompleted = false;
-            StopAlertSound();
-        }
-
-        /// <summary>
         /// Updates the time estimate for charging or discharging.
         /// </summary>
         private void UpdateChargeTimeEstimate(PowerStatus powerStatus, float batteryLevel, BatteryChargeStatus chargeStatus)
@@ -727,13 +726,36 @@ namespace BatteryMonitor
                 if (lifeRemaining > 0)
                 {
                     lblTimeRemaining.Text = $"Time Remaining: {FormatTime(lifeRemaining)}";
-                }    
+                }
             }
         }
 
         #endregion
 
-        #region Alert Sound Methods
+        #region Alert Methods
+
+        /// <summary>
+        /// Handles the logic for triggering an alert.
+        /// </summary>
+        private void HandleAlertCondition(bool isUpper, string soundFile)
+        {
+            ShowAndFocus();
+            if (isUpper) upperAlertCounter++; else lowerAlertCounter++;
+            if (isUpper) lowerAlertCounter = 0; else upperAlertCounter = 0;
+            StartAlertSound(soundFile);
+            isAlertCompleted = true;
+        }
+
+        /// <summary>
+        /// Resets alert counters and stops any active alert sound.
+        /// </summary>
+        private void ResetAlertState()
+        {
+            upperAlertCounter = 0;
+            lowerAlertCounter = 0;
+            isAlertCompleted = false;
+            StopAlertSound();
+        }
 
         /// <summary>
         /// Starts playing an alert sound file in a loop.
@@ -827,6 +849,43 @@ namespace BatteryMonitor
         #endregion
 
         #region Helper Methods
+
+        /// <summary>
+        /// Retrieves battery design and full charge capacity from WMI.
+        /// </summary>
+        /// <returns>A tuple containing the design capacity and full charge capacity. Returns (-1, -1) on failure.</returns>
+        private (int designCapacity, int fullChargeCapacity) GetBatteryInfo()
+        {
+            int designCapacity = -1;
+            int fullChargeCapacity = -1;
+
+            try
+            {
+                // Battery Static Data = Design Capacity
+                using (var searcher = new ManagementObjectSearcher("root\\wmi", "SELECT * FROM BatteryStaticData"))
+                {
+                    foreach (ManagementObject obj in searcher.Get())
+                    {
+                        designCapacity = Convert.ToInt32(obj["DesignedCapacity"]);
+                    }
+                }
+
+                // Battery Full Charged Capacity = Current Max Capacity
+                using (var searcher = new ManagementObjectSearcher("root\\wmi", "SELECT * FROM BatteryFullChargedCapacity"))
+                {
+                    foreach (ManagementObject obj in searcher.Get())
+                    {
+                        fullChargeCapacity = Convert.ToInt32(obj["FullChargedCapacity"]);
+                    }
+                }
+            }
+            catch
+            {
+                // Some machines may not report values
+            }
+
+            return (designCapacity, fullChargeCapacity);
+        }
 
         /// <summary>
         /// Brings the window to the foreground and flashes the taskbar icon to get user attention.
@@ -973,6 +1032,8 @@ namespace BatteryMonitor
         #endregion
     }
 
+    #region Configuration Class
+
     /// <summary>
     /// Holds configuration settings for the battery monitor application.
     /// </summary>
@@ -999,4 +1060,6 @@ namespace BatteryMonitor
         /// </summary>
         public bool MuteAlerts { get; set; } = false;
     }
+
+    #endregion
 }

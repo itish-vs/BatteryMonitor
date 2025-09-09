@@ -37,6 +37,7 @@ namespace BatteryMonitor
             btnMinimize = new Button();
             labelTitle = new Label();
             toolTip1 = new ToolTip(components);
+            button1 = new Button();
             panelConfig = new Panel();
             tglMute = new JCS.ToggleSwitch();
             configSlideTimer = new System.Windows.Forms.Timer(components);
@@ -47,6 +48,7 @@ namespace BatteryMonitor
             lblConfig = new Label();
             lblBy = new Label();
             lblTimeRemaining = new Label();
+            lblBatteryHealth = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBoxBattery).BeginInit();
             panelTop.SuspendLayout();
             panelConfig.SuspendLayout();
@@ -178,6 +180,26 @@ namespace BatteryMonitor
             labelTitle.TabIndex = 2;
             labelTitle.Text = "Battery Monitor";
             // 
+            // button1
+            // 
+            button1.BackColor = Color.Transparent;
+            button1.Cursor = Cursors.Hand;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            button1.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            button1.ForeColor = Color.Blue;
+            button1.Location = new Point(72, 201);
+            button1.Name = "button1";
+            button1.Size = new Size(19, 23);
+            button1.TabIndex = 18;
+            button1.Text = "?";
+            button1.TextAlign = ContentAlignment.MiddleLeft;
+            toolTip1.SetToolTip(button1, "About");
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
             // panelConfig
             // 
             panelConfig.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -268,12 +290,23 @@ namespace BatteryMonitor
             lblTimeRemaining.TabIndex = 15;
             lblTimeRemaining.Text = "Time Remaining: N/A";
             // 
+            // lblBatteryHealth
+            // 
+            lblBatteryHealth.AutoSize = true;
+            lblBatteryHealth.Location = new Point(345, 173);
+            lblBatteryHealth.Name = "lblBatteryHealth";
+            lblBatteryHealth.Size = new Size(110, 15);
+            lblBatteryHealth.TabIndex = 16;
+            lblBatteryHealth.Text = "Battery Health: N/A";
+            // 
             // Monitor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FloralWhite;
             ClientSize = new Size(500, 234);
+            Controls.Add(button1);
+            Controls.Add(lblBatteryHealth);
             Controls.Add(lblTimeRemaining);
             Controls.Add(lblBy);
             Controls.Add(lblConfig);
@@ -305,5 +338,7 @@ namespace BatteryMonitor
         private Label lblConfig;
         private Label lblBy;
         private Label lblTimeRemaining;
+        private Label lblBatteryHealth;
+        private Button button1;
     }
 }
