@@ -286,8 +286,20 @@ namespace BatteryMonitor
         /// </summary>
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            StopAlertSound();
-            Application.Exit();
+            // Show confirmation dialog before closing
+            var result = MessageBox.Show(
+                "Are you sure you want to exit Battery Monitor?",
+                "Confirm Exit",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                StopAlertSound();
+                Application.Exit();
+            }
         }
 
         /// <summary>
@@ -401,6 +413,24 @@ namespace BatteryMonitor
         /// </summary>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            // Only show confirmation if user is trying to close (not minimize to tray)
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                var result = MessageBox.Show(
+                    "Are you sure you want to exit Battery Monitor?",
+                    "Confirm Exit",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true; // Cancel the close operation
+                    return;
+                }
+            }
+
             StopAlertSound();
             if (trayIcon != null) trayIcon.Visible = false;
             base.OnFormClosing(e);
