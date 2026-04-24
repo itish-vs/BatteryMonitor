@@ -92,7 +92,13 @@ namespace BatteryMonitor
 
         // Charge estimation
         private readonly Queue<(DateTime time, float percent)> chargeHistory = new();
-        private const int MaxHistoryCount = 5; // Keep last 5 samples (≈25 sec if 5s interval)
+        private const int MaxHistoryCount = 5; // Keep last 5 samples (≈50 sec at 10s interval)
+
+        // Cached battery hardware info (WMI is expensive; these values change very slowly)
+        private (int designCapacity, int fullChargeCapacity)? cachedBatteryInfo;
+        private DateTime cachedBatteryInfoAt = DateTime.MinValue;
+        private static readonly TimeSpan BatteryInfoRefreshInterval = TimeSpan.FromMinutes(10);
+        private readonly object batteryInfoLock = new();
 
         #endregion
 
@@ -130,13 +136,23 @@ namespace BatteryMonitor
 
                 SetRoundedCorners(irndradius);
 
-                // Main timer for checking battery status
+                // Main timer for checking battery status.
+                // 10s is more than frequent enough: the OS-reported battery percentage
+                // rarely changes faster than that, and a longer interval reduces CPU wake-ups.
                 timer = new System.Windows.Forms.Timer
                 {
-                    Interval = 5000
+                    Interval = 10000
                 };
                 timer.Tick += Timer_Tick;
                 timer.Start();
+
+                // Warm the WMI battery-info cache off the UI thread so the first
+                // UpdateBatteryStatus() call doesn't block the window from painting
+                // on slower machines.
+                _ = Task.Run(() =>
+                {
+                    try { GetBatteryInfo(); } catch { /* ignored: cache will fill on next call */ }
+                });
 
                 // Enable window dragging for labels and picture boxes
                 foreach (Control ctrl in this.Controls)
@@ -186,11 +202,15 @@ namespace BatteryMonitor
         /// <summary>
         /// Handles the main timer tick event to update battery status and UI.
         /// </summary>
-        private async void Timer_Tick(object? sender, EventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             try
             {
-                pictureBoxBattery.Invalidate();
+                // Only repaint the custom-drawn battery when no charging image is set;
+                // when an image is assigned the PictureBox renders it directly.
+                if (pictureBoxBattery.Image == null)
+                    pictureBoxBattery.Invalidate();
+
                 UpdateBatteryStatus();
                 if (startupOverlay != null && startupOverlay.Visible)
                 {
@@ -208,10 +228,6 @@ namespace BatteryMonitor
                     inner = inner.InnerException;
                 }
                 ShowErrorOverlay(sb.Length > 0 ? sb.ToString().Trim() : ex.Message);
-            }
-            finally
-            {
-                await Task.Delay(500);
             }
         }
 
@@ -886,6 +902,17 @@ namespace BatteryMonitor
         /// <returns>A tuple containing the design capacity and full charge capacity. Returns (-1, -1) on failure.</returns>
         private (int designCapacity, int fullChargeCapacity) GetBatteryInfo()
         {
+            // WMI calls are expensive (spawn/communicate with WmiPrvSE.exe). These values
+            // barely change over time, so cache the result and refresh only occasionally.
+            lock (batteryInfoLock)
+            {
+                if (cachedBatteryInfo.HasValue &&
+                    (DateTime.UtcNow - cachedBatteryInfoAt) < BatteryInfoRefreshInterval)
+                {
+                    return cachedBatteryInfo.Value;
+                }
+            }
+
             int designCapacity = -1;
             int fullChargeCapacity = -1;
 
@@ -914,7 +941,12 @@ namespace BatteryMonitor
                 // Some machines may not report values
             }
 
-            return (designCapacity, fullChargeCapacity);
+            lock (batteryInfoLock)
+            {
+                cachedBatteryInfo = (designCapacity, fullChargeCapacity);
+                cachedBatteryInfoAt = DateTime.UtcNow;
+                return cachedBatteryInfo.Value;
+            }
         }
 
         /// <summary>
